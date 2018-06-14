@@ -1,0 +1,14 @@
+Funções principais:
+
+
+
+Banco de dados:
+- Usuário (CPF, nome, hash_senha, data_cadastro, ultimo_acesso)
+- Papel (papel, permissoes)
+- Relacionamento Usuário/Papel (múltiplos papeis por usuário)
+- Pessoa (descrição de pessoa: CPF, nome, sobrenome, último visto (referência para Denúncias),
+          última modificação (referência para tabela Auditoria), etc.)
+- Histórico (lat, long, endereço, &pessoa (Pessoa), detalhes (string), &usuario_informante,
+             data_hora)
+- Denúncia (
+- Auditoria (todas operações até agora)
