@@ -19,9 +19,9 @@ private:
 	double latitude;
 	double longitude;
 	string endereco;
-	Pessoa pessoa;
+	shared_ptr<Pessoa> pessoa;
 	string detalhes;
-	Usuario usuario;
+	shared_ptr<Usuario> usuario;
 	string data_hora_visto;
 
 public:

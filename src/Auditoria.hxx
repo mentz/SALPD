@@ -8,14 +8,14 @@ private:
 	string acao;
 
 	// usuario: Usuário que fez ação
-	int usuario;
+	shared_ptr<Usuario> usuario;
 
 public:
 	Auditoria();
-	Auditoria(string acao, int usuario);
+	Auditoria(string acao, shared_ptr<Usuario> usuario);
 
 	void setAcao(string acao);
-	void setUsuario(int usuario);
+	void setUsuario(shared_ptr<Usuario> usuario);
 
 	string getAcao();
 	int getUsuario();
@@ -25,12 +25,13 @@ public:
 
 /* CONSTRUCTORS */
 
+// Rever este, acredito que não precisamos ter construtor vazio
 Auditoria::Auditoria(){
 	this->acao = "";
-	this->usuario = "";
+	this->usuario = NULL;
 }
 
-Auditoria::Auditoria(string acao, int usuario){
+Auditoria::Auditoria(string acao, shared_ptr<Usuario> usuario){
 	this->acao = acao;
 	this->usuario = usuario;
 }

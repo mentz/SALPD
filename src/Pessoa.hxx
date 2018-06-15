@@ -20,29 +20,30 @@ private:
 	string rg;
 	string nome;
 	string sobrenome;
-	Denuncia ultimo_visto;
-	Auditoria ultima_modificacao;
+	shared_ptr<Denuncia> ultimo_visto;
+	shared_ptr<Auditoria> ultima_modificacao;
 
 public:
 
 	Pessoa();
-	Pessoa(int id, string cpf, string rg, string nome, string sobrenome, Denuncia ultimo_visto, Auditoria ultima_modificacao);
+	Pessoa(int id, string cpf, string rg, string nome, string sobrenome,
+		   shared_ptr<Denuncia> ultimo_visto, shared_ptr<Auditoria> ultima_modificacao);
 
 	void setID(int id);
 	void setCPF(string cpf);
 	void setRG(string rg);
 	void setNome(string nome);
 	void setSobrenome(string sobrenome);
-	void setUltimoVisto(Denuncia ultimo_visto);
-	void setUltimaModificacao(Auditoria ultima_modificacao);
+	void setUltimoVisto(shared_ptr<Denuncia> ultimo_visto);
+	void setUltimaModificacao(shared_ptr<Auditoria> ultima_modificacao);
 
 	int getID();
 	string getCPF();
 	string getRG();
 	string getNome();
 	string getSobrenome();
-	Denuncia getUltimoVisto();
-	Auditoria getUltimaModificacao();
+	shared_ptr<Denuncia> getUltimoVisto();
+	shared_pt<Auditoria> getUltimaModificacao();
 };
 
 /* CONSTRUCTORS */
@@ -56,7 +57,8 @@ Pessoa::Pessoa(){
 	this->ultima_modificacao = NULL;
 }
 
-Pessoa::Pessoa(int id, string cpf, string rg, string nome, string sobrenome, Denuncia ultimo_visto, Auditoria ultima_modificacao){
+Pessoa::Pessoa(int id, string cpf, string rg, string nome, string sobrenome,
+	           shared_ptr<Denuncia> ultimo_visto, shared_ptr<Auditoria> ultima_modificacao){
 	this->id = id;
 	this->cpf = cpf;
 	this->rg = rg;
