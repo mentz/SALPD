@@ -1,4 +1,5 @@
 // Auditoria.hxx
+#include "commons.hpp"
 
 class Auditoria
 {
@@ -8,4 +9,5 @@ class Auditoria
 	// usuario: Usuário que fez ação
 	int usuario;
 
+	// TODO completar classe
 };
