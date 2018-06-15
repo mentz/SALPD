@@ -16,6 +16,7 @@ class Pessoa{
 
 private:
 	int id;
+	int estado;	// 0 para perdido, 1 para encontrado
 	string cpf;
 	string rg;
 	string nome;
@@ -89,11 +90,11 @@ void Pessoa::setSobrenome(string sobrenome){
 	this->sobrenome = sobrenome;
 }
 
-void Pessoa::setUltimoVisto(Denuncia ultimo_visto){
+void Pessoa::setUltimoVisto(shared_ptr<Denuncia> ultimo_visto){
 	this->ultimo_visto = ultimo_visto;
 }
 
-void Pessoa::setUltimaModificacao(Auditoria ultima_modificacao){
+void Pessoa::setUltimaModificacao(shared_ptr<Auditoria> ultima_modificacao){
 	this->ultima_modificacao = ultima_modificacao;
 }
 
@@ -118,10 +119,10 @@ string Pessoa::getSobrenome(){
 	return this->sobrenome;
 }
 
-Denuncia Pessoa::getUltimoVisto(){
+shared_ptr<Denuncia> Pessoa::getUltimoVisto(){
 	return this->ultimo_visto;
 }
 
-Auditoria Pessoa::getUltimaModificacao(){
+shared_ptr<Auditoria> Pessoa::getUltimaModificacao(){
 	return this->ultima_modificacao;
 }

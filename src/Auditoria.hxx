@@ -18,7 +18,7 @@ public:
 	void setUsuario(shared_ptr<Usuario> usuario);
 
 	string getAcao();
-	int getUsuario();
+	shared_ptr<Usuario> getUsuario();
 
 	// TODO completar classe
 };
@@ -40,7 +40,7 @@ Auditoria::Auditoria(string acao, shared_ptr<Usuario> usuario){
 void Auditoria::setAcao(string acao){
 	this->acao = acao;
 }
-void Auditoria::setUsuario(int usuario){
+void Auditoria::setUsuario(shared_ptr<Usuario> usuario){
 	this->usuario = usuario;
 }
 
@@ -49,6 +49,6 @@ void Auditoria::setUsuario(int usuario){
 string Auditoria::getAcao(){
 	return this->acao;
 }
-int Auditoria::getUsuario(){
+shared_ptr<Usuario> Auditoria::getUsuario(){
 	return this->usuario;
 }

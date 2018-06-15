@@ -10,7 +10,8 @@ Papel (
 class Papel{
 private:
 	int papel;
-	string permissoes;
+	string permissoes; // Somente descritivo. As restrições em si são implementadas
+					   // no programa ou na base de dados por meio de triggers.
 
 public:
 	Papel();

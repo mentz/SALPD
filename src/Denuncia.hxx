@@ -19,31 +19,33 @@ private:
 	double latitude;
 	double longitude;
 	string endereco;
-	shared_ptr<Pessoa> pessoa;
+	shared_ptr<Pessoa> pessoa;		// Pessoa desaparecida
 	string detalhes;
-	shared_ptr<Usuario> usuario;
+	shared_ptr<Usuario> usuario;	// Inserido por
 	string data_hora_visto;
 
 public:
 	Denuncia();
-	Denuncia(int id, double latitude, double longitude, string endereco, Pessoa pessoa, strin detalhes, Usuario usuario, string data_hora_visto);
+	Denuncia(int id, double latitude, double longitude, string endereco,
+			 shared_ptr<Pessoa> pessoa, string detalhes, shared_ptr<Usuario> usuario,
+			 string data_hora_visto);
 
 	void setID(int id);
 	void setLatitude(double latitude);
 	void setLongitude(double longitude);
 	void setEndereco(string endereco);
-	void setPessoa(Pessoa pessoa);
+	void setPessoa(shared_ptr<Pessoa> pessoa);
 	void setDetalhes(string detalhes);
-	void setUsuario(Usuario usuario);
+	void setUsuario(shared_ptr<Usuario> usuario);
 	void setDataHoraVisto(string data_hora_visto);
 
 	int getID();
 	double getLatitude();
 	double getLongitude();
 	string getEndereco();
-	Pessoa getPessoa();
+	shared_ptr<Pessoa> getPessoa();
 	string getDetalhes();
-	Usuario getUsuario();
+	shared_ptr<Usuario> getUsuario();
 	string getDataHoraVisto();
 
 };
@@ -59,7 +61,9 @@ Denuncia::Denuncia(){
 	this->usuario = NULL;
 	this->data_hora_visto = "";
 }
-Denuncia::Denuncia(int id, double latitude, double longitude, string endereco, Pessoa pessoa, strin detalhes, Usuario usuario, string data_hora_visto){
+Denuncia::Denuncia(int id, double latitude, double longitude, string endereco,
+				   shared_ptr<Pessoa> pessoa, string detalhes, shared_ptr<Usuario> usuario,
+				   string data_hora_visto){
 	this->id = id;
 	this->latitude = latitude;
 	this->longitude = longitude;
@@ -87,7 +91,7 @@ void Denuncia::setEndereco(string endereco){
 	this->endereco = endereco;
 }
 
-void Denuncia::setPessoa(Pessoa pessoa){
+void Denuncia::setPessoa(shared_ptr<Pessoa> pessoa){
 	this->pessoa = pessoa;
 }
 
@@ -95,7 +99,7 @@ void Denuncia::setDetalhes(string detalhes){
 	this->detalhes = detalhes;
 }
 
-void Denuncia::setUsuario(Usuario usuario){
+void Denuncia::setUsuario(shared_ptr<Usuario> usuario){
 	this->usuario = usuario;
 }
 
@@ -120,7 +124,7 @@ string Denuncia::getEndereco(){
 	return this->endereco;
 }
 
-Pessoa Denuncia::getPessoa(){
+shared_ptr<Pessoa> Denuncia::getPessoa(){
 	return this->pessoa;
 }
 
@@ -128,7 +132,7 @@ string Denuncia::getDetalhes(){
 	return this->detalhes;
 }
 
-Usuario Denuncia::getUsuario(){
+shared_ptr<Usuario> Denuncia::getUsuario(){
 	return this->usuario;
 }
 
