@@ -1,4 +1,8 @@
+#ifndef __USUARIO_HXX__
+#define __USUARIO_HXX__
+
 #include "commons.hpp"
+
 /* Usuario (
 		int id PRIMARY KEY,
 		char[11] cpf UNIQUE,
@@ -14,7 +18,7 @@
 class Usuario{
 private:
 	//friend class odb::access;
-	int id
+	int id;
 	string rg;
 	string cpf;
 	string nome;
@@ -68,7 +72,7 @@ Usuario::Usuario(int id, string rg, string cpf, string nome, string sobrenome, s
 	this->sobrenome = sobrenome;
 	this->hash_senha = hash_senha;
 	this->data_cadastro = data_cadastro;
-	this->ultimo_acesso = ultimo_acesso;	
+	this->ultimo_acesso = ultimo_acesso;
 }
 
 /* SETTERS */
@@ -137,3 +141,4 @@ string Usuario::getUltimoAcesso(){
 	return this -> ultimo_acesso;
 }
 
+#endif

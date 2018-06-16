@@ -1,3 +1,6 @@
+#ifndef __PAPEL_HXX__
+#define __PAPEL_HXX__
+
 #include "commons.hpp"
 
 /*
@@ -50,3 +53,5 @@ int Papel::getPapel(){
 string Papel::getPermissoes(){
 	return permissoes;
 }
+
+#endif

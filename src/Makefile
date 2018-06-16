@@ -1,11 +1,11 @@
-FILES=main.cpp
-OUT=salpd
-CC=g++
-FLAGS=-Wall -std=c++11
+FILES = main.cpp
+OUT = salpd
+CC = g++
+FLAGS = -Wall -std=c++17
 
 default: clean build
 
-clean: 
+clean:
 	-rm salpd
 
 build: $(FILES)

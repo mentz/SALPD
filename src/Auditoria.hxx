@@ -1,5 +1,9 @@
+#ifndef __AUDITORIA_HXX__
+#define __AUDITORIA_HXX__
+
 // Auditoria.hxx
 #include "commons.hpp"
+#include "Usuario.hxx"
 
 class Auditoria{
 
@@ -52,3 +56,5 @@ string Auditoria::getAcao(){
 shared_ptr<Usuario> Auditoria::getUsuario(){
 	return this->usuario;
 }
+
+#endif

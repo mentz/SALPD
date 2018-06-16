@@ -7,6 +7,7 @@
 #include "Usuario.hxx"
 #include "UsuarioPapel.hxx"
 #include "Funcoes.hpp"
+#include "DAO.hpp"
 
 int main(int argc, char **argv)
 {
@@ -17,7 +18,7 @@ int main(int argc, char **argv)
 		printf("Uso: $ %s <db_address> <db_port> <db_user> <db_pass> <db_database>\n", argv[0]);
 		return 1;
 	}
-	
+
 	// Definição de parâmetros
 	char DB_ADDR[512], DB_USER[128], DB_PASS[128], DB_DATABASE[128];
 	int DB_PORT;

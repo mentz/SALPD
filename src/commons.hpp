@@ -4,12 +4,11 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cmath>
-
 #include <vector>
 #include <string>
 #include <sstream>
+#include <memory>
 
 using namespace std;
-
 
 #endif

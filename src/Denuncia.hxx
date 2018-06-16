@@ -1,6 +1,10 @@
+#ifndef __DENUNCIA_HXX__
+#define __DENUNCIA_HXX__
+
 #include "commons.hpp"
 #include "Pessoa.hxx"
 #include "Usuario.hxx"
+
 /* Denuncia (
 	int id PRIMARY KEY,
 	double latitude NOT NULL,
@@ -13,7 +17,7 @@
 	)
 */
 
-class Denuncia{
+class Denuncia {
 private:
 	int id;
 	double latitude;
@@ -140,3 +144,4 @@ string Denuncia::getDataHoraVisto(){
 	return this->data_hora_visto;
 }
 
+#endif

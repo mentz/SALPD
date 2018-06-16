@@ -1,4 +1,9 @@
+#ifndef __PESSOA_HXX__
+#define __PESSOA_HXX__
+
 #include "commons.hpp"
+#include "Denuncia.hxx"
+#include "Auditoria.hxx"
 
 /* Pessoa (
 		int id PRIMARY KEY,
@@ -21,21 +26,20 @@ private:
 	string rg;
 	string nome;
 	string sobrenome;
-	shared_ptr<Denuncia> ultimo_visto;
+	//shared_ptr<Denuncia> ultimo_visto;
 	shared_ptr<Auditoria> ultima_modificacao;
 
 public:
 
 	Pessoa();
-	Pessoa(int id, string cpf, string rg, string nome, string sobrenome,
-		   shared_ptr<Denuncia> ultimo_visto, shared_ptr<Auditoria> ultima_modificacao);
+	Pessoa(int id, string cpf, string rg, string nome, string sobrenome, shared_ptr<Auditoria> ultima_modificacao);
 
 	void setID(int id);
 	void setCPF(string cpf);
 	void setRG(string rg);
 	void setNome(string nome);
 	void setSobrenome(string sobrenome);
-	void setUltimoVisto(shared_ptr<Denuncia> ultimo_visto);
+	//void setUltimoVisto(shared_ptr<Denuncia> ultimo_visto);
 	void setUltimaModificacao(shared_ptr<Auditoria> ultima_modificacao);
 
 	int getID();
@@ -43,8 +47,8 @@ public:
 	string getRG();
 	string getNome();
 	string getSobrenome();
-	shared_ptr<Denuncia> getUltimoVisto();
-	shared_pt<Auditoria> getUltimaModificacao();
+	//shared_ptr<Denuncia> getUltimoVisto();
+	shared_ptr<Auditoria> getUltimaModificacao();
 };
 
 /* CONSTRUCTORS */
@@ -54,18 +58,17 @@ Pessoa::Pessoa(){
 	this->rg = "";
 	this->nome = "";
 	this->sobrenome = "";
-	this->ultimo_visto = NULL;
+	//this->ultimo_visto = NULL;
 	this->ultima_modificacao = NULL;
 }
 
-Pessoa::Pessoa(int id, string cpf, string rg, string nome, string sobrenome,
-	           shared_ptr<Denuncia> ultimo_visto, shared_ptr<Auditoria> ultima_modificacao){
+Pessoa::Pessoa(int id, string cpf, string rg, string nome, string sobrenome, shared_ptr<Auditoria> ultima_modificacao){
 	this->id = id;
 	this->cpf = cpf;
 	this->rg = rg;
 	this->nome = nome;
 	this->sobrenome = sobrenome;
-	this->ultimo_visto = ultimo_visto;
+	//this->ultimo_visto = ultimo_visto;
 	this->ultima_modificacao = ultima_modificacao;
 }
 
@@ -74,7 +77,7 @@ void Pessoa::setID(int id){
 	this->id = id;
 }
 
-void Pessoa::setCPF(string cpf){	
+void Pessoa::setCPF(string cpf){
 	this->cpf = cpf;
 }
 
@@ -90,9 +93,9 @@ void Pessoa::setSobrenome(string sobrenome){
 	this->sobrenome = sobrenome;
 }
 
-void Pessoa::setUltimoVisto(shared_ptr<Denuncia> ultimo_visto){
-	this->ultimo_visto = ultimo_visto;
-}
+// void Pessoa::setUltimoVisto(shared_ptr<Denuncia> ultimo_visto){
+// 	this->ultimo_visto = ultimo_visto;
+// }
 
 void Pessoa::setUltimaModificacao(shared_ptr<Auditoria> ultima_modificacao){
 	this->ultima_modificacao = ultima_modificacao;
@@ -119,10 +122,12 @@ string Pessoa::getSobrenome(){
 	return this->sobrenome;
 }
 
-shared_ptr<Denuncia> Pessoa::getUltimoVisto(){
-	return this->ultimo_visto;
-}
+// shared_ptr<Denuncia> Pessoa::getUltimoVisto(){
+// 	return this->ultimo_visto;
+// }
 
 shared_ptr<Auditoria> Pessoa::getUltimaModificacao(){
 	return this->ultima_modificacao;
 }
+
+#endif

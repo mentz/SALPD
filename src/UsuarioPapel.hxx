@@ -2,21 +2,26 @@
 #define __USUPAPEL__
 
 #include "commons.hpp"
+#include "Usuario.hxx"
+#include "Papel.hxx"
+#include "Auditoria.hxx"
 
 class UsuarioPapel{
 private:
 	shared_ptr<Usuario> usuario;
 	shared_ptr<Papel> papel;
 	shared_ptr<Auditoria> auditoria;
-
+	bool valido;
 public:
 	UsuarioPapel();
 	UsuarioPapel(shared_ptr<Usuario> usuario, shared_ptr<Papel> papel,
-				 shared_ptr<Auditoria> auditoria);
-	
+				 bool valido, shared_ptr<Auditoria> auditoria);
+
 	shared_ptr<Usuario> getUsuario();
 	shared_ptr<Papel> getPapel();
-	shared_ptr<Auditoria> getAuditoria;
+	shared_ptr<Auditoria> getAuditoria();
+	bool getValido();
+	bool setValido();
 };
 
 /* CONSTRUCTORS */
@@ -58,14 +63,14 @@ shared_ptr<Auditoria> UsuarioPapel::getAuditoria(){
 
 /* SETTERS */
 
-bool AuditoriaPapel::setValido(){
-	// TODO Adicionar esta ação na Auditoria
-	/*
-	Auditorias.push_back(GLOBAL_USUARIO, getDateTime(),
-		"UsuarioPapel;alterado 'valido'");
-	*/
-	// ^ é um exemplo, temos que descobrir como fazer depois
-	return this->auditoria;
-}
+// bool UsuarioPapel::setValido(){
+// 	// TODO Adicionar esta ação na Auditoria
+// 	/*
+// 	Auditorias.push_back(GLOBAL_USUARIO, getDateTime(),
+// 		"UsuarioPapel;alterado 'valido'");
+// 	*/
+// 	// ^ é um exemplo, temos que descobrir como fazer depois
+// 	return this->auditoria;
+// }
 
 #endif
