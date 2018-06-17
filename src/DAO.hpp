@@ -54,6 +54,51 @@ public:
 	string getPessoaSobrenome();
 	//shared_ptr<Denuncia> getPessoaUltimoVisto();
 	shared_ptr<Auditoria> getPessoaUltimaModificacao();
+
+    /* Auditoria */
+    //SETTERS
+    void setAuditoriaAcao(string acao);
+	void setAuditoriaUsuario(shared_ptr<Usuario> usuario);
+    //GETTERS
+    string getAuditoriaAcao();
+	shared_ptr<Usuario> getAuditoriaUsuario();
+
+    /* UsuarioPapel */
+    //SETTERS
+    bool setUsuarioPapelValido();
+    //GETTERS
+    shared_ptr<Usuario> getUsuarioPapelUsuario();
+	shared_ptr<Papel> getUsuarioPapelPapel();
+	shared_ptr<Auditoria> getUsuarioPapelAuditoria();
+	bool getUsuarioPapelValido();
+
+    /* Usuario */
+    //SETTERS
+    void setUsuarioID(int id);
+	void setUsuarioRG(string rg);
+	void setUsuarioCPF(string cpf);
+	void setUsuarioNome(string nome);
+	void setUsuarioSobrenome(string sobrenome);
+	void setUsuarioHashSenha(string hash_senha);
+	void setUsuarioDataCadastro(string data_cadastro);
+	void setUsuarioUltimoAcesso(string ultimo_acesso);
+    //GETTERS
+    int getUsuarioID();
+	string getUsuarioRG();
+	string getUsuarioCPF();
+	string getUsuarioNome();
+	string getUsuarioSobrenome();
+	string getUsuarioHashSenha();
+	string getUsuarioDataCadastro();
+	string getUsuarioUltimoAcesso();
+
+    /* Papel */
+    //SETTERS
+    void setPapelPapel(int papel);
+    void setPapelPermissoes(string permissoes);
+    //GETTERS
+    int getPapelPapel();
+    string getPapelPermissoes();
 };
 DAO::DAO(){
     printf("DAO Criado!\n");
@@ -170,5 +215,108 @@ string DAO::getPessoaSobrenome(){
 // }
 shared_ptr<Auditoria> DAO::getPessoaUltimaModificacao(){
     return this -> pessoa.getUltimaModificacao();
+}
+
+/********************* AUDITORIA ************************/
+//SETTERS
+void DAO::setAuditoriaAcao(string acao){
+    this -> auditoria.setAcao(acao);
+}
+void DAO::setAuditoriaUsuario(shared_ptr<Usuario> usuario){
+    this -> auditoria.setUsuario(usuario);
+}
+//GETTERS
+string DAO::getAuditoriaAcao(){
+    return this -> auditoria.getAcao();
+}
+shared_ptr<Usuario> DAO::getAuditoriaUsuario(){
+    return this -> auditoria.getUsuario();
+}
+
+/********************* USUARIOPAPEL ************************/
+//SETTERS
+// bool DAO::setUsuarioPapelValido(){
+//     return this -> usuarioPapel.setValido();
+// }
+//GETTERS
+shared_ptr<Usuario> DAO::getUsuarioPapelUsuario(){
+    return this -> usuarioPapel.getUsuario();
+}
+shared_ptr<Papel> DAO::getUsuarioPapelPapel(){
+    return this -> usuarioPapel.getPapel();
+}
+shared_ptr<Auditoria> DAO::getUsuarioPapelAuditoria(){
+    return this -> usuarioPapel.getAuditoria();
+}
+bool DAO::getUsuarioPapelValido(){
+    return this -> usuarioPapel.getValido();
+}
+
+/********************* USUARIO ************************/
+//SETTERS
+void DAO::setUsuarioID(int id){
+    this -> usuario.setID(id);
+}
+void DAO::setUsuarioRG(string rg){
+    this -> usuario.setRG(rg);
+}
+void DAO::setUsuarioCPF(string cpf){
+    this -> usuario.setCPF(cpf);
+}
+void DAO::setUsuarioNome(string nome){
+    this -> usuario.setNome(nome);
+}
+void DAO::setUsuarioSobrenome(string sobrenome){
+    this -> usuario.setSobrenome(sobrenome);
+}
+void DAO::setUsuarioHashSenha(string hash_senha){
+    this -> usuario.setHashSenha(hash_senha);
+}
+void DAO::setUsuarioDataCadastro(string data_cadastro){
+    this -> usuario.setDataCadastro(data_cadastro);
+}
+void DAO::setUsuarioUltimoAcesso(string ultimo_acesso){
+    this -> usuario.setUltimoAcesso(ultimo_acesso);
+}
+//GETTERS
+int DAO::getUsuarioID(){
+    return this -> usuario.getID();
+}
+string DAO::getUsuarioRG(){
+    return this -> usuario.getRG();
+}
+string DAO::getUsuarioCPF(){
+    return this -> usuario.getCPF();
+}
+string DAO::getUsuarioNome(){
+    return this -> usuario.getNome();
+}
+string DAO::getUsuarioSobrenome(){
+    return this -> usuario.getSobrenome();
+}
+string DAO::getUsuarioHashSenha(){
+    return this -> usuario.getHashSenha();
+}
+string DAO::getUsuarioDataCadastro(){
+    return this -> usuario.getDataCadastro();
+}
+string DAO::getUsuarioUltimoAcesso(){
+    return this -> usuario.getUltimoAcesso();
+}
+
+/********************* PAPEL ************************/
+//SETTERS
+void DAO::setPapelPapel(int papel){
+    this -> papel.setPapel(papel);
+}
+void DAO::setPapelPermissoes(string permissoes){
+    this -> papel.setPermissoes(permissoes);
+}
+//GETTERS
+int DAO::getPapelPapel(){
+    return this -> papel.getPapel();
+}
+string DAO::getPapelPermissoes(){
+    return this -> papel.getPermissoes();
 }
 #endif
