@@ -26,6 +26,7 @@ void clearConsole()
 		   "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
 		   "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
 }
+
 Denuncia fazDenuncia(){
 	system(CLEAR);
 
@@ -50,6 +51,8 @@ Denuncia fazDenuncia(){
 	cout << "\t\tFormulario de Denuncias: \n\n";
 	cout << "Nome do desaparecido(a): ";
 	getline(cin, pessoa);
+	// lista = dao.getPessoaPeloNome(pessoa);
+	//
 
 	cout << "Endereco: ";
 	getline(cin, endereco);
@@ -66,20 +69,20 @@ Denuncia fazDenuncia(){
 	pes = shared_ptr<Pessoa> (new Pessoa());
 	usu = shared_ptr<Usuario>(new Usuario());
 
-	den = Denuncia(	id,
-		 		   	latitude,
-				   	longitude,
-			   	   	endereco,
-					pes,
-					detalhes,
-					usu,
-					data_hora_visto);
+	den = Denuncia(id,
+		 		   latitude,
+				   longitude,
+			   	   endereco,
+				   pes,
+				   detalhes,
+				   usu,
+				   data_hora_visto);
 
 	return den;
 }
 
 
-void menu(){
+void menu(DAO dao){
 	int sair = 0;
 	bool logado = false;
 	char ch;

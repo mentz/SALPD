@@ -11,8 +11,6 @@
 
 class DAO {
 private:
-    // static DAO * singleton;
-
     Denuncia denuncia;
     Papel papel;
     Pessoa pessoa;
@@ -24,8 +22,8 @@ private:
     DAO();
     DAO(Denuncia denuncia, Papel papel, Pessoa pessoa, Usuario usuario, UsuarioPapel usuarioPapel, Auditoria auditoria);
 public:
+    static DAO& getInstance();
 
-    // static DAO * getInstance();
     void add();
     void printCnt();
     /* Denuncia */
@@ -130,12 +128,11 @@ DAO::DAO(Denuncia denuncia, Papel papel, Pessoa pessoa, Usuario usuario, Usuario
     this -> auditoria = auditoria;
 }
 
-// DAO * DAO::getInstance(){
-//     if(DAO::singleton == NULL){
-//         DAO::singleton = new DAO();
-//     }
-//     return DAO::singleton;
-// }
+DAO& DAO::getInstance(){
+	static DAO instance;
+
+    return instance;
+}
 
 void DAO::add(){
     this -> cnt++;
