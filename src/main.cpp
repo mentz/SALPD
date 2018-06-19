@@ -1,11 +1,11 @@
 #include <vector>
 #include <cstdio>
 
-#include "Auditoria.hxx"
-#include "Denuncia.hxx"
-#include "Papel.hxx"
-#include "Usuario.hxx"
-#include "UsuarioPapel.hxx"
+// #include "Auditoria.hxx"
+// #include "Denuncia.hxx"
+// #include "Papel.hxx"
+// #include "Usuario.hxx"
+// #include "UsuarioPapel.hxx"
 #include "Funcoes.hpp"
 #include "DAO.hpp"
 
@@ -28,9 +28,9 @@ int main(int argc, char **argv){
 	sscanf(argv[4], "%s", DB_PASS);
 	sscanf(argv[5], "%s", DB_DATABASE);
 	*/
-	DAO * newDAO = DAO::getInstance();
-	newDAO -> add();
-	newDAO -> printCnt();
+	// DAO * newDAO = DAO::getInstance();
+	// newDAO -> add();
+	// newDAO -> printCnt();
 	menu();
 
 	return 0;

@@ -4,22 +4,22 @@
 #include "commons.hpp"
 #include "Usuario.hxx"
 #include "Papel.hxx"
-#include "Auditoria.hxx"
+// #include "Auditoria.hxx"
 
 class UsuarioPapel{
 private:
 	shared_ptr<Usuario> usuario;
 	shared_ptr<Papel> papel;
-	shared_ptr<Auditoria> auditoria;
+	// shared_ptr<Auditoria> auditoria;
 	bool valido;
 public:
 	UsuarioPapel();
 	UsuarioPapel(shared_ptr<Usuario> usuario, shared_ptr<Papel> papel,
-				 bool valido, shared_ptr<Auditoria> auditoria);
+				 bool valido/*, shared_ptr<Auditoria> auditoria*/);
 
 	shared_ptr<Usuario> getUsuario();
 	shared_ptr<Papel> getPapel();
-	shared_ptr<Auditoria> getAuditoria();
+	// shared_ptr<Auditoria> getAuditoria();
 	bool getValido();
 	bool setValido();
 };
@@ -30,15 +30,15 @@ UsuarioPapel::UsuarioPapel(){
 	usuario   = NULL;
 	papel     = NULL;
 	valido    = false;
-	auditoria = NULL;
+	// auditoria = NULL;
 }
 
 UsuarioPapel::UsuarioPapel(shared_ptr<Usuario> usuario, shared_ptr<Papel> papel,
-						   bool valido, shared_ptr<Auditoria> auditoria){
+						   bool valido/*, shared_ptr<Auditoria> auditoria*/){
 	this->usuario   = usuario;
 	this->papel     = papel;
 	this->valido    = valido;
-	this->auditoria = auditoria;
+	// this->auditoria = auditoria;
 }
 
 
@@ -56,9 +56,9 @@ bool UsuarioPapel::getValido(){
 	return this->valido;
 }
 
-shared_ptr<Auditoria> UsuarioPapel::getAuditoria(){
-	return this->auditoria;
-}
+// shared_ptr<Auditoria> UsuarioPapel::getAuditoria(){
+// 	return this->auditoria;
+// }
 
 
 /* SETTERS */

@@ -3,7 +3,7 @@
 
 // Auditoria.hxx
 #include "commons.hpp"
-#include "Usuario.hxx"
+#include "UsuarioPapel.hxx"
 
 class Auditoria{
 
@@ -12,17 +12,17 @@ private:
 	string acao;
 
 	// usuario: Usuário que fez ação
-	shared_ptr<Usuario> usuario;
+	shared_ptr<UsuarioPapel> usuario;
 
 public:
 	Auditoria();
-	Auditoria(string acao, shared_ptr<Usuario> usuario);
+	Auditoria(string acao, shared_ptr<UsuarioPapel> usuario);
 
 	void setAcao(string acao);
-	void setUsuario(shared_ptr<Usuario> usuario);
+	void setUsuario(shared_ptr<UsuarioPapel> usuario);
 
 	string getAcao();
-	shared_ptr<Usuario> getUsuario();
+	shared_ptr<UsuarioPapel> getUsuario();
 
 	// TODO completar classe
 };
@@ -35,7 +35,7 @@ Auditoria::Auditoria(){
 	this->usuario = NULL;
 }
 
-Auditoria::Auditoria(string acao, shared_ptr<Usuario> usuario){
+Auditoria::Auditoria(string acao, shared_ptr<UsuarioPapel> usuario){
 	this->acao = acao;
 	this->usuario = usuario;
 }
@@ -44,7 +44,7 @@ Auditoria::Auditoria(string acao, shared_ptr<Usuario> usuario){
 void Auditoria::setAcao(string acao){
 	this->acao = acao;
 }
-void Auditoria::setUsuario(shared_ptr<Usuario> usuario){
+void Auditoria::setUsuario(shared_ptr<UsuarioPapel> usuario){
 	this->usuario = usuario;
 }
 
@@ -53,7 +53,7 @@ void Auditoria::setUsuario(shared_ptr<Usuario> usuario){
 string Auditoria::getAcao(){
 	return this->acao;
 }
-shared_ptr<Usuario> Auditoria::getUsuario(){
+shared_ptr<UsuarioPapel> Auditoria::getUsuario(){
 	return this->usuario;
 }
 

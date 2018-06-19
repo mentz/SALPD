@@ -2,8 +2,8 @@
 #define __PESSOA_HXX__
 
 #include "commons.hpp"
-#include "Denuncia.hxx"
 #include "Auditoria.hxx"
+// #include "Denuncia.hxx"
 
 /* Pessoa (
 		int id PRIMARY KEY,

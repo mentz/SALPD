@@ -4,6 +4,12 @@
 #include "commons.hpp"
 #include "DAO.hpp"
 
+#ifdef _WIN32
+	#define CLEAR "cls"
+#else
+	#define CLEAR "clear"
+#endif
+
 void clearConsole()
 {
 	/* Na verdade não limpa, apenas imprime um bocadinho de
@@ -24,30 +30,34 @@ void clearConsole()
 
 void menu(){
 	int sair = 0;
-	/*while (!sair){
-		clearConsole();
+	while (!sair){
+		int op;
+		system(CLEAR);
+		// clearConsole();
 		// Apresentar opções
-		printf("\t\tBando de dados Bucadinho\n\n");
+		printf("\t\tBando de dados Bucadinho/Clelio\n\n");
 		printf("1 -> Login\n");
 		printf("2 -> Fazer denuncia\n");
 		printf("3 -> Sair\n");
-		int op;
-		scanf("> %d", &op);
+		cout << "> ";
+		cin >> op;
 		switch (op) {
 			case 1:
 				break;
 			case 2:
 				break;
 			case 3:
-				sair = 0;
+				sair = 1;
 				break;
 			default:
 				printf("Digite uma opcao valida!!\n");
+				break;
 		}
-	}*/
-	DAO * otherDAO = DAO::getInstance();
-	otherDAO -> add();
-	otherDAO -> printCnt();
+	}
+
+	// DAO * otherDAO = DAO::getInstance();
+	// otherDAO -> add();
+	// otherDAO -> printCnt();
 }
 
 #endif

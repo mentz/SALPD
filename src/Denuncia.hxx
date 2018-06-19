@@ -3,7 +3,7 @@
 
 #include "commons.hpp"
 #include "Pessoa.hxx"
-#include "Usuario.hxx"
+// #include "Usuario.hxx"
 
 /* Denuncia (
 	int id PRIMARY KEY,
