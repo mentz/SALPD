@@ -9,8 +9,7 @@
 #include "Funcoes.hpp"
 #include "DAO.hpp"
 
-int main(int argc, char **argv)
-{
+int main(int argc, char **argv){
 	/* Remover este comentário quando formos usar ODB
 	if (argc < 6)
 	{
@@ -29,8 +28,10 @@ int main(int argc, char **argv)
 	sscanf(argv[4], "%s", DB_PASS);
 	sscanf(argv[5], "%s", DB_DATABASE);
 	*/
-	DAO dao;
-	//menu();
+	DAO * newDAO = DAO::getInstance();
+	newDAO -> add();
+	newDAO -> printCnt();
+	menu();
 
 	return 0;
 }

@@ -5,16 +5,22 @@
 
 class DAO {
 private:
+    static DAO * singleton;
+
     Denuncia denuncia;
     Papel papel;
     Pessoa pessoa;
     Usuario usuario;
     UsuarioPapel usuarioPapel;
     Auditoria auditoria;
-public:
+    int cnt;
     DAO();
     DAO(Denuncia denuncia, Papel papel, Pessoa pessoa, Usuario usuario, UsuarioPapel usuarioPapel, Auditoria auditoria);
+public:
 
+    static DAO * getInstance();
+    void add();
+    void printCnt();
     /* Denuncia */
     //SETTERS
     Denuncia getDenuncia();
@@ -102,6 +108,8 @@ public:
 };
 DAO::DAO(){
     printf("DAO Criado!\n");
+    singleton = NULL;
+    this -> cnt = 0;
 }
 DAO::DAO(Denuncia denuncia, Papel papel, Pessoa pessoa, Usuario usuario, UsuarioPapel usuarioPapel, Auditoria auditoria){
     this -> denuncia = denuncia;
@@ -110,6 +118,20 @@ DAO::DAO(Denuncia denuncia, Papel papel, Pessoa pessoa, Usuario usuario, Usuario
     this -> usuario = usuario;
     this -> usuarioPapel = usuarioPapel;
     this -> auditoria = auditoria;
+}
+
+DAO * DAO::getInstance(){
+    if(DAO::singleton == NULL){
+        DAO::singleton = new DAO();
+    }
+    return DAO::singleton;
+}
+
+void DAO::add(){
+    this -> cnt++;
+}
+void DAO::printCnt(){
+    printf("%d\n", this -> cnt);
 }
 
 /********************* DENUNCIA ************************/
