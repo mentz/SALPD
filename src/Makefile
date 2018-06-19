@@ -1,4 +1,4 @@
-FILES = main.cpp
+FILES = main.cpp 
 OUT = salpd
 CC = g++
 FLAGS = -Wall -std=c++17
