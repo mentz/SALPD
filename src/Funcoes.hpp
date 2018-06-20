@@ -10,8 +10,9 @@
 	#define CLEAR "clear"
 #endif
 
-void clearConsole()
-{
+extern Usuario admin;
+
+void clearConsole(){
 	/* Na verdade não limpa, apenas imprime um bocadinho de
 	 * '\n's para subir a sujeira.
 	 */
@@ -27,7 +28,88 @@ void clearConsole()
 		   "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
 }
 
-Denuncia fazDenuncia(){
+Usuario criaUsuario(){
+	system(CLEAR);
+	Usuario usu;
+	int id;
+	string rg;
+	string cpf;
+	string nome;
+	string sobrenome;
+	string hash_senha = "123456";
+	string data_cadastro = "agora";
+	string ultimo_acesso = "";
+
+	id = 1;
+	cout << "\t\tFormulario de Usuario\n\n";
+
+	cout << "Digite o RG: ";
+	cin >> rg;
+
+	cout << "Digite o CPF: ";
+	cin >> cpf;
+
+	cout << "Digite o nome: ";
+	cin >> nome;
+
+	cout << "Digite o sobrenome: ";
+	cin >> sobrenome;
+
+	usu = Usuario(id, rg, cpf, nome, sobrenome, hash_senha, data_cadastro, ultimo_acesso);
+	cout << "Usuario criado com sucesso!\n";
+	return usu;
+}
+
+Usuario verificaLogin(){
+	system(CLEAR);
+	Usuario usu;
+	int id;
+	string senha;
+
+	cout << "Digite seu id: ";
+	cin >> id;
+
+	cout << "Digite sua senha: ";
+	cin >> senha;
+
+	if( id == admin.getID() && senha == admin.getHashSenha()){
+		cout << "Bem vindo Admin" << endl;
+		return admin;
+	}
+}
+
+void menuAdmin(){
+	int sair = 0;
+	char ch;
+	//Usuario* usuario;
+
+	while (!sair){
+		int op;
+		system(CLEAR);
+		// clearConsole();
+		// Apresentar opções
+		printf("\t\tMenu do Admin\n\n");
+		printf("1 -> Criar Usuarios\n");
+		printf("2 -> Sair\n");
+		cout << "> ";
+		cin >> op;
+		switch (op) {
+			case 1:
+				criaUsuario();
+				cin >> ch;
+				break;
+			case 2:
+				sair = 1;
+				break;
+			default:
+				printf("Digite uma opcao valida!!\n");
+				break;
+		}
+	}
+
+}
+
+Denuncia criaDenuncia(){
 	system(CLEAR);
 
 	int id;
@@ -87,7 +169,7 @@ void menu(DAO dao){
 	bool logado = false;
 	char ch;
 	Denuncia denuncia;
-	//Usuario* usuario;
+	Usuario usuario;
 
 	while (!sair){
 		int op;
@@ -102,9 +184,11 @@ void menu(DAO dao){
 		cin >> op;
 		switch (op) {
 			case 1:
+				usuario = verificaLogin();
 				logado = true;
-				cout << "Seja bem-vindo!" << endl;
 				cin >> ch;
+				if(usuario.getID() == 0)
+					menuAdmin();
 				break;
 			case 2:
 				if(!logado){
@@ -112,7 +196,7 @@ void menu(DAO dao){
 					cin >> ch;
 				}
 				else{
-					denuncia = fazDenuncia();
+					denuncia = criaDenuncia();
 					// dar push_back nessa denuncia??
 					cout << "Denuncia feita com sucesso!" << endl;
 					cin >> ch;

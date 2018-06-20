@@ -9,7 +9,10 @@
 #include "Funcoes.hpp"
 #include "DAO.hpp"
 
+Usuario admin;
+
 int main(int argc, char **argv){
+	admin = Usuario(0, "", "", "Admin", "", "admin", "", "");
 	/* Remover este comentário quando formos usar ODB
 	if (argc < 6)
 	{

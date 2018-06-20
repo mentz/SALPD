@@ -1,0 +1,281 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"ult",
+				"ultima_modificacao"
+			],
+			[
+				"ul",
+				"ultimo_visto"
+			],
+			[
+				"ultim",
+				"ultima_modificacao"
+			],
+			[
+				"ut",
+				"ultima_modificação"
+			],
+			[
+				"utl",
+				"ultimo_visto"
+			],
+			[
+				"en",
+				"endereco"
+			],
+			[
+				"h",
+				"hash_senha"
+			],
+			[
+				"data_",
+				"data_cadastro"
+			],
+			[
+				"s",
+				"string"
+			],
+			[
+				"set",
+				"setRG"
+			],
+			[
+				"u",
+				"ultimo_acesso"
+			],
+			[
+				"has",
+				"hashingTable"
+			],
+			[
+				"re",
+				"resposta"
+			],
+			[
+				"repo",
+				"resposta"
+			],
+			[
+				"p",
+				"puzzle"
+			],
+			[
+				"pr",
+				"primos"
+			],
+			[
+				"print",
+				"printPuzzle"
+			]
+		]
+	},
+	"buffers":
+	[
+	],
+	"build_system": "",
+	"build_system_choices":
+	[
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"console":
+	{
+		"height": 0.0,
+		"history":
+		[
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"file_history":
+	[
+		"/home/arthur/Documents/Nuvem/New-Programs/HiBench/bin/workloads/micro/wordcount/prepare/prepare.sh",
+		"/home/arthur/Documents/Nuvem/New-Programs/HiBench/bin/workloads/micro/sleep/hadoop/run.sh",
+		"/home/arthur/Documents/Nuvem/New-Programs/HiBench/bin/run_all.sh",
+		"/home/arthur/Documents/Nuvem/New-Programs/HiBench/bin/build_all.sh",
+		"/home/arthur/Documents/Nuvem/New-Programs/HiBench/bin/functions/color.sh",
+		"/home/arthur/Documents/Nuvem/hadoop/commands-history.txt",
+		"/home/arthur/Documents/Faculdade/BAN/to-do-list.txt",
+		"/home/arthur/Documents/Faculdade/BAN/SALPD/Implementacao.txt",
+		"/home/arthur/Documents/Faculdade/BAN/SALPD/src/UsuarioPapel.hxx",
+		"/home/arthur/Documents/Faculdade/BAN/SALPD/src/Usuario.hxx",
+		"/home/arthur/Documents/Faculdade/BAN/SALPD/src/Pessoa.hxx",
+		"/home/arthur/Documents/Faculdade/BAN/SALPD/src/Denuncia.hxx",
+		"/home/arthur/Documents/Faculdade/BAN/SALPD/src/Papel.hxx",
+		"/home/arthur/Documents/Faculdade/BAN/SALPD/src/Auditoria.hxx",
+		"/home/arthur/Documents/Faculdade/BAN/SALPD/src/commons.hpp",
+		"/home/arthur/Documents/Nuvem/New-Programs/hadoop-2.9.1/etc/hadoop/mapred-site.xml.template",
+		"/home/arthur/Documents/Nuvem/New-Programs/hadoop-2.9.1/etc/hadoop/yarn-site.xml",
+		"/home/arthur/Documents/Nuvem/hadoop/new-commands.txt",
+		"/home/arthur/Documents/Nuvem/New-Programs/hadoop-2.9.1/etc/hadoop/core-site.xml",
+		"/home/arthur/Documents/Nuvem/New-Programs/hadoop-2.9.1/etc/hadoop/hdfs-site.xml",
+		"/home/arthur/Documents/Nuvem/New-Programs/hadoop-2.9.1/etc/hadoop/hadoop-env.sh",
+		"/home/arthur/Documents/Nuvem/Programs/hadoop-2.9.1/etc/hadoop/hadoop-env.sh",
+		"/home/arthur/Documents/Faculdade/CAL/Atividades/Lista-Exercicios/puzzle-bfs.cpp",
+		"/home/arthur/Documents/Faculdade/CAL/Trabalho-3-Graham-Scan/input.in",
+		"/home/arthur/Documents/Faculdade/CAL/Trabalho-3-Graham-Scan/graham-scan.cpp",
+		"/home/arthur/Documents/Faculdade/CAL/Trabalho-3-Convex-Hull/convex-hull.cpp",
+		"/home/arthur/Documents/Nuvem/Programs/hadoop-2.9.1/etc/hadoop/yarn-site.xml",
+		"/home/arthur/Documents/Nuvem/Programs/hadoop-2.9.1/bin/hdfs",
+		"/home/arthur/Documents/Nuvem/Programs/hadoop-2.9.1/etc/hadoop/hdfs-site.xml",
+		"/home/arthur/Documents/Nuvem/Programs/hadoop-2.9.1/etc/hadoop/core-site.xml",
+		"/home/arthur/Documents/Nuvem/hadoop/.gitignore",
+		"/home/arthur/Programs/hadoop-2.9.1/etc/hadoop/core-site.xml",
+		"/home/arthur/Programs/hadoop-2.9.1/etc/hadoop/hadoop-env.sh",
+		"/home/arthur/Programs/hadoop-2.9.1/etc/hadoop/hdfs-site.xml",
+		"/home/arthur/Programs/hadoop-2.9.1/etc/hadoop/yarn-site.xml",
+		"/home/arthur/Documents/Nuvem/Hadoop-Word-Count/src/main/java/com/igalia/wordcount/App.java",
+		"/home/arthur/Documents/Nuvem/Hadoop-Word-Count/src/main/java/com/igalia/wordcount/WordCount.java",
+		"/tmp/wordcount/in/entrada.in",
+		"/home/arthur/Documents/Nuvem/HiBench/README.md",
+		"/home/arthur/Documents/Nuvem/vcc_mininet/Codigo/Justice/run_mininet.py",
+		"/home/arthur/Documents/Nuvem/vcc_mininet/Codigo/Justice/rodar_mininet.sh",
+		"/home/arthur/Documents/Nuvem/HiBench/docs/build-hibench.md",
+		"/tmp/wordcount/in/entrada",
+		"/home/arthur/Documents/CAL/Trabalho-2-Busca/Binary_Tree/utils.cpp",
+		"/home/arthur/Documents/CAL/.gitignore",
+		"/home/arthur/Documents/CAL/README.md",
+		"/home/arthur/Documents/CAL/Atividades/Lista-Exercicios/puzzle.txt",
+		"/home/arthur/Documents/CAL/Atividades/Lista-Exercicios/puzzle.cpp",
+		"/home/arthur/Documents/CAL/Atividades/Lista-Exercicios/puzzle.py"
+	],
+	"find":
+	{
+		"height": 24.0
+	},
+	"find_in_files":
+	{
+		"height": 0.0,
+		"where_history":
+		[
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"sheets":
+			[
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 24.0
+	},
+	"input":
+	{
+		"height": 0.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"pinned_build_system": "",
+	"project": "Auditoria.sublime-project",
+	"replace":
+	{
+		"height": 44.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 150.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}
