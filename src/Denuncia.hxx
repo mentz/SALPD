@@ -17,8 +17,11 @@
 	)
 */
 
+#pragma db object
 class Denuncia {
 private:
+
+	#pragma db id auto
 	int id;
 	double latitude;
 	double longitude;

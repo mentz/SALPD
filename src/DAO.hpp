@@ -152,6 +152,62 @@ void DAO::setDenuncia(Denuncia denuncia){
 void DAO::setDenunciaID(int id){
 	this -> denuncia.setID(id);
 }
+
+void DAO::createDenuncia(){
+    system(CLEAR);
+
+	int id;
+	double latitude;
+	double longitude;
+	string endereco;
+	string pessoa;
+	shared_ptr<Pessoa> pes;
+	string detalhes;
+	string usuario;
+	shared_ptr<Usuario> usu;
+	string data_hora_visto;
+
+	Denuncia den;
+
+	id = 0;
+	latitude = 30;
+	longitude= 30;
+
+	getchar();
+	cout << "\t\tFormulario de Denuncias: \n\n";
+	cout << "Nome do desaparecido(a): ";
+	getline(cin, pessoa);
+	// lista = dao.getPessoaPeloNome(pessoa);
+
+	cout << "Endereco: ";
+	getline(cin, endereco);
+
+	cout << "Quando ele(a) foi visto(a): ";
+	getline(cin, data_hora_visto);
+
+	cout << "Seu nome: ";
+	getline(cin, usuario);
+
+	cout << "Detalhes: ";
+	getline(cin, detalhes);
+
+	pes = shared_ptr<Pessoa> (new Pessoa());
+	usu = shared_ptr<Usuario>(new Usuario());
+
+	den = Denuncia(id,
+		 		   latitude,
+				   longitude,
+			   	   endereco,
+				   pes,
+				   detalhes,
+				   usu,
+				   data_hora_visto);
+
+    // transaction t (db -> begin());
+    // int tmp = db -> persist(den);
+	// t -> commit();
+}
+
 void DAO::setDenunciaLatitude(double latitude){
 	this -> denuncia.setLatitude(latitude);
 }

@@ -10,6 +10,13 @@
 #include <sstream>
 #include <memory>
 
+
+#ifdef _WIN32
+	#define CLEAR "cls"
+#else
+	#define CLEAR "clear"
+#endif
+
 using namespace std;
 
 #endif

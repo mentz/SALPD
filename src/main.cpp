@@ -31,10 +31,7 @@ int main(int argc, char **argv){
 	sscanf(argv[4], "%s", DB_PASS);
 	sscanf(argv[5], "%s", DB_DATABASE);
 	*/
-	DAO newDAO = DAO::getInstance();
-	newDAO.add();
-	newDAO.printCnt();
-	menu(newDAO);
+	menu();
 
 	return 0;
 }
