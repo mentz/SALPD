@@ -5,35 +5,15 @@
 #include "AllClass.hxx"
 #include "AllClass-odb.hxx"
 #include "DAO.hpp"
-//
-// extern Usuario admin;
-//
-//
-// Usuario verificaLogin(){
-// 	system(CLEAR);
-// 	Usuario usu;
-// 	int id;
-// 	string senha;
-//
-// 	cout << "Digite seu id: ";
-// 	cin >> id;
-//
-// 	cout << "Digite sua senha: ";
-// 	cin >> senha;
-//
-// 	if( id == admin.getID() && senha == admin.getHashSenha()){
-// 		cout << "Bem vindo Admin" << endl;
-// 		return admin;
-// 	}
-// }
-//
-void menuAdmin(auto_ptr<database> db){
+
+void menuAdmin(shared_ptr<database> db){
 	int sair = 0;
 	char ch;
 	//Usuario* usuario;
 
 	while (!sair){
-		int op;
+		int op, ret;
+		char ch;
 		system(CLEAR);
 		// clearConsole();
 		// Apresentar opções
@@ -44,7 +24,10 @@ void menuAdmin(auto_ptr<database> db){
 		cin >> op;
 		switch (op) {
 			case 1:
-				DAO::getInstance().criaUsuario(db);
+				ret = DAO::getInstance().criaUsuario(db);
+				if(ret){
+					cout << "Usuario criado com sucesso!\n";
+				}
 				cin >> ch;
 				break;
 			case 2:
@@ -55,68 +38,73 @@ void menuAdmin(auto_ptr<database> db){
 				break;
 		}
 	}
+}
 
+int menuAnonimo(shared_ptr<database> db){
+	int op, r = -1, ret;
+	char ch;
+	system(CLEAR);
+	// clearConsole();
+	// Apresentar opções
+	printf("\t\tSALPD\n\n");
+	printf("1 -> Login\n");
+	printf("2 -> Fazer denuncia anonima\n");
+	printf("3 -> Sair\n");
+	cout << "> ";
+	cin >> op;
+	switch (op) {
+		case 1:
+			r = DAO::getInstance().verificaLogin(db);
+			if(r > 0){
+				cout << "Login efetuado com sucesso!" << endl;
+			}
+			cin >> ch;
+			break;
+		case 2:
+			ret = DAO::getInstance().createDenuncia(db);
+			if(ret){
+				cout << "Denuncia feita com sucesso!" << endl;
+			}
+			cin >> ch;
+			break;
+		case 3:
+			r = -2;
+			break;
+		default:
+			printf("Digite uma opcao valida!!\n");
+			cin >> ch;
+			break;
+	}
+	return r;
 }
 //
 //
 
-void menu(auto_ptr<database> db){
-	int sair = 0, user, r;
+void menu(shared_ptr<database> db){
+
+	int sair = 0, user = -1, r;
 	bool logado = false;
 	char ch;
-	string line;
-	stringstream command;
-	while (!sair){
-		int op;
-		system(CLEAR);
-		// Apresentar opções
-		if(logado and user == 1){
-			menuAdmin(db);
-			user = -1;
-			logado = false;
-		} else {
-			printf("\t\tBanco de dados\n\n");
-			printf("1 -> Login\n");
-			printf("2 -> Fazer denuncia\n");
-			printf("3 -> Sair\n");
-			cout << "> ";
-			getline(cin, line);
-			command = stringstream(line);
-			command >> op;
-			switch (op) {
-				case 1:
-					r = DAO::getInstance().verificaLogin(db);
-					if(r != -1){
-						user = r;
-						logado = 1;
-					}
-					break;
-				case 2:
-					if(!logado){
-						cout << "Logue no sistema antes!" << endl;
-						getchar();
-					}
-					else{
-						DAO::getInstance().createDenuncia(db);
-						// dar push_back nessa denuncia??
-						cout << "Denuncia feita com sucesso!" << endl;
-						getchar();
-					}
-					break;
-				case 3:
-					sair = 1;
-					break;
-				default:
-					printf("Digite uma opcao valida!!\n");
-					sair = 1; // Pra não fazer mais o loop feio
-					break;
-			}
+	while (!sair and user >= -1){
+		switch(user){
+			case ADMIN:
+				menuAdmin(db);
+				user = -1;
+				break;
+			case GESTOR:
+				user = -1;
+				break;
+			case AGENTE:
+				user = -1;
+				break;
+			case INFORMANTE:
+				user = -1;
+				break;
+			default: //ANONIMO
+				user = menuAnonimo(db);
+				break;
 		}
 	}
-
-	// DAO * otherDAO = DAO::getInstance();
-	// otherDAO -> add();
-	// otherDAO -> printCnt();
 }
 
 #endif

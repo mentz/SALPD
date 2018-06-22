@@ -11,11 +11,11 @@
 
 // Usuario admin;
 
-auto_ptr<database> db;
 
 int main(int argc, char **argv){
+	shared_ptr<database> db;
 	try {
-		db = auto_ptr<database>(new odb::pgsql::database(argc, argv));
+		db = shared_ptr<database>(new odb::pgsql::database(argc, argv));
 	} catch(const odb::exception &e){
 		cerr << e.what() << endl;
 	}

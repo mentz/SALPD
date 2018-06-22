@@ -17,6 +17,12 @@
 
 #include <odb/pgsql/database.hxx>
 
+#define ADMIN 1
+#define GESTOR 2
+#define AGENTE 3
+#define INFORMANTE 4
+#define ANONIMO 5
+
 using namespace odb::core;
 using namespace std;
 

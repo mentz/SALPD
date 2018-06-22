@@ -41,7 +41,7 @@ public:
 	// shared_ptr<Usuario> getDenunciaUsuario();
 	// string getDenunciaDataHoraVisto();
     //
-    void createDenuncia(auto_ptr<database> db);
+    int createDenuncia(shared_ptr<database> db);
     //
     // /* Pessoa */
     // //SETTERS
@@ -97,7 +97,7 @@ public:
 	// string getUsuarioHashSenha();
 	// string getUsuarioDataCadastro();
 	// string getUsuarioUltimoAcesso();
-    void criaUsuario(auto_ptr<database> db);
+    int criaUsuario(shared_ptr<database> db);
     // /* Papel */
     // //SETTERS
     // void setPapelPapel(int papel);
@@ -107,7 +107,7 @@ public:
     // string getPapelPermissoes();
 
     /* Trecos aleatorios */
-    int verificaLogin(auto_ptr<database> db);
+    int verificaLogin(shared_ptr<database> db);
 };
 
 #include "DAO.hpp"
@@ -131,6 +131,7 @@ DAO& DAO::getInstance(){
 
     return instance;
 }
+
 //
 // void DAO::add(){
 //     this -> cnt++;
@@ -151,7 +152,7 @@ DAO& DAO::getInstance(){
 // 	this -> denuncia.setID(id);
 // }
 //
-void DAO::createDenuncia(auto_ptr<database> db){
+int DAO::createDenuncia(shared_ptr<database> db){
     system(CLEAR);
 
     double latitude;
@@ -196,10 +197,18 @@ void DAO::createDenuncia(auto_ptr<database> db){
                    usu,
                    data_hora_visto);
 
-    transaction t (db -> begin());
-    unsigned int id = db -> persist(den);
-    t.commit();
+    try {
+        transaction t (db -> begin());
+        unsigned int id = db -> persist(den);
+        t.commit();
+        return 1;
+    } catch(const odb::exception &e){
+		cerr << e.what() << endl;
+        return 0;
+	}
+
 }
+
 //
 // void DAO::setDenunciaLatitude(double latitude){
 // 	this -> denuncia.setLatitude(latitude);
@@ -382,15 +391,15 @@ void DAO::createDenuncia(auto_ptr<database> db){
 //     return this -> usuario.getUltimoAcesso();
 // }
 
-void DAO::criaUsuario(auto_ptr<database> db){
+int DAO::criaUsuario(shared_ptr<database> db){
     system(CLEAR);
     string rg;
     string cpf;
     string nome;
     string sobrenome;
     string hash_senha = "123456";
-    string data_cadastro = "agora";
-    string ultimo_acesso = "agora";
+    string data_cadastro = "20180622";
+    string ultimo_acesso = "20180622";
 
     cout << "\t\tFormulario de Usuario\n\n";
 
@@ -410,12 +419,18 @@ void DAO::criaUsuario(auto_ptr<database> db){
 
     /* Ponto de falha do carai */
 
-    transaction t(db -> begin());
+    try {
+        transaction t(db -> begin());
 
-    db -> persist(usu);
+        unsigned int id = db -> persist(usu);
 
-    t.commit();
-    cout << "Usuario criado com sucesso!\n";
+        t.commit();
+
+        return 1;
+    } catch(odb::exception &e){
+        cerr << e.what() << endl;
+        return 0;
+    }
 }
 
 // /********************* PAPEL ************************/
@@ -435,7 +450,7 @@ void DAO::criaUsuario(auto_ptr<database> db){
 // }
 
 /*********************************** TRECOS ALEATORIOS **********************************/
-int DAO::verificaLogin(auto_ptr<database> db){
+int DAO::verificaLogin(shared_ptr<database> db){
     system(CLEAR);
     int id;
     string senha;
@@ -449,19 +464,26 @@ int DAO::verificaLogin(auto_ptr<database> db){
     typedef odb::query<usuario> query;
     typedef odb::result<usuario> result;
 
-    transaction t(db -> begin());
-    result r(db -> query<usuario> (query::id == id and query::hash_senha == senha));
+    try {
+        transaction t(db -> begin());
+        result r(db -> query<usuario> (query::id == id and query::hash_senha == senha));
 
-    int ret;
+        int ret;
 
-    if(r.size() == 0) ret = -1;
-    else {
-        result::iterator it = r.begin();
-        ret = it -> getID();
+        if(r.size() == 0){
+            cout << "ID e/ou senha incorretos!" << endl;
+            ret = -1;
+        } else {
+            result::iterator it = r.begin();
+            ret = it -> getID();
+        }
+        t.commit();
+
+        return ret;
+    } catch(odb::exception &e){
+        cerr << e.what() << endl;
+        return 0;
     }
-    t.commit();
-
-    return ret;
 }
 
 #endif
