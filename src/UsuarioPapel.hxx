@@ -4,6 +4,7 @@
 #include "commons.hpp"
 #include "Usuario.hxx"
 #include "Papel.hxx"
+#include <vector>
 // #include "Auditoria.hxx"
 
 class UsuarioPapel{
@@ -12,8 +13,9 @@ private:
 	shared_ptr<Papel> papel;
 	// shared_ptr<Auditoria> auditoria;
 	bool valido;
-public:
+
 	UsuarioPapel();
+public:
 	UsuarioPapel(shared_ptr<Usuario> usuario, shared_ptr<Papel> papel,
 				 bool valido/*, shared_ptr<Auditoria> auditoria*/);
 

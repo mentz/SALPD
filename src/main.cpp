@@ -9,10 +9,12 @@
 #include "Funcoes.hpp"
 #include "DAO.hpp"
 
-Usuario admin;
+// Usuario admin;
+
+auto_ptr<database> db;
 
 int main(int argc, char **argv){
-	admin = Usuario(0, "", "", "Admin", "", "admin", "", "");
+	// admin = Usuario(0, "", "", "Admin", "", "admin", "", "");
 	/* Remover este comentário quando formos usar ODB
 	if (argc < 6)
 	{
@@ -31,7 +33,13 @@ int main(int argc, char **argv){
 	sscanf(argv[4], "%s", DB_PASS);
 	sscanf(argv[5], "%s", DB_DATABASE);
 	*/
-	menu();
+	try {
+		db = auto_ptr<database>(new odb::pgsql::database(argc, argv));
+	} catch(const odb::exception &e){
+		cerr << e.what() << endl;
+	}
+
+	menu(db);
 
 	return 0;
 }

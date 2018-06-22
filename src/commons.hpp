@@ -10,13 +10,20 @@
 #include <sstream>
 #include <memory>
 
+//Senha do bando de dados: ccxuE7Ak3GIXiq05gcVT3vgvwJ7naT8-
+
+#include <odb/database.hxx>
+#include <odb/transaction.hxx>
+
+#include <odb/pgsql/database.hxx>
+
+using namespace odb::core;
+using namespace std;
 
 #ifdef _WIN32
 	#define CLEAR "cls"
 #else
 	#define CLEAR "clear"
 #endif
-
-using namespace std;
 
 #endif

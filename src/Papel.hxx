@@ -1,8 +1,8 @@
 #ifndef __PAPEL_HXX__
 #define __PAPEL_HXX__
 
-#include "commons.hpp"
-
+#include <odb/core.hxx>
+#include <string>
 /*
 Papel (
 	int papel,
@@ -10,48 +10,39 @@ Papel (
 	)
 */
 
-class Papel{
+#pragma db object
+class Papel {
 private:
+	#pragma db id auto
+	unsigned long id;
+
+	friend class odb::access;
+
 	int papel;
-	string permissoes; // Somente descritivo. As restrições em si são implementadas
+	std::string permissoes; // Somente descritivo. As restrições em si são implementadas
 					   // no programa ou na base de dados por meio de triggers.
 
+	Papel() {}
 public:
-	Papel();
-	Papel(int papel, string permissoes);
+	Papel(int papel, std::string permissoes){
+		this -> papel = papel;
+		this -> permissoes = permissoes;
+	}
 
-	void setPapel(int papel);
-	void setPermissoes(string permissoes);
+	void setPapel(int papel){
+		this -> papel = papel;
+	}
+	void setPermissoes(std::string permissoes){
+		this -> permissoes = permissoes;
+	}
 
-	int getPapel();
-	string getPermissoes();
+	int getPapel(){
+		return this -> papel;
+	}
+	std::string getPermissoes(){
+		return this -> permissoes;
+	}
 
 };
-
-/* CONSTRUCTORS */
-Papel::Papel(){
-	this->papel = -1;
-	this->permissoes = "";
-}
-Papel::Papel(int papel, string permissoes){
-	this->papel = papel;
-	this->permissoes = permissoes;
-}
-
-/* SETTERS */
-void Papel::setPapel(int papel){
-	this->papel = papel;
-}
-void Papel::setPermissoes(string permissoes){
-	this->permissoes = permissoes;
-}
-
-/* GETTERS */
-int Papel::getPapel(){
-	return papel;
-}
-string Papel::getPermissoes(){
-	return permissoes;
-}
 
 #endif
