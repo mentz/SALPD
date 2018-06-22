@@ -41,7 +41,7 @@ public:
 	// shared_ptr<Usuario> getDenunciaUsuario();
 	// string getDenunciaDataHoraVisto();
     //
-    // void createDenuncia();
+    void createDenuncia(auto_ptr<database> db);
     //
     // /* Pessoa */
     // //SETTERS
@@ -97,7 +97,7 @@ public:
 	// string getUsuarioHashSenha();
 	// string getUsuarioDataCadastro();
 	// string getUsuarioUltimoAcesso();
-    //
+    void criaUsuario(auto_ptr<database> db);
     // /* Papel */
     // //SETTERS
     // void setPapelPapel(int papel);
@@ -105,6 +105,9 @@ public:
     // //GETTERS
     // int getPapelPapel();
     // string getPapelPermissoes();
+
+    /* Trecos aleatorios */
+    int verificaLogin(auto_ptr<database> db);
 };
 
 #include "DAO.hpp"
@@ -148,60 +151,55 @@ DAO& DAO::getInstance(){
 // 	this -> denuncia.setID(id);
 // }
 //
-// void DAO::createDenuncia(){
-//     system(CLEAR);
-//
-// 	int id;
-// 	double latitude;
-// 	double longitude;
-// 	string endereco;
-// 	string pessoa;
-// 	shared_ptr<Pessoa> pes;
-// 	string detalhes;
-// 	string usuario;
-// 	shared_ptr<Usuario> usu;
-// 	string data_hora_visto;
-//
-// 	Denuncia den;
-//
-// 	id = 0;
-// 	latitude = 30;
-// 	longitude= 30;
-//
-// 	getchar();
-// 	cout << "\t\tFormulario de Denuncias: \n\n";
-// 	cout << "Nome do desaparecido(a): ";
-// 	getline(cin, pessoa);
-// 	// lista = dao.getPessoaPeloNome(pessoa);
-//
-// 	cout << "Endereco: ";
-// 	getline(cin, endereco);
-//
-// 	cout << "Quando ele(a) foi visto(a): ";
-// 	getline(cin, data_hora_visto);
-//
-// 	cout << "Seu nome: ";
-// 	getline(cin, usuario);
-//
-// 	cout << "Detalhes: ";
-// 	getline(cin, detalhes);
-//
-// 	pes = shared_ptr<Pessoa> (new Pessoa());
-// 	usu = shared_ptr<Usuario>(new Usuario());
-//
-// 	den = Denuncia(id,
-// 		 		   latitude,
-// 				   longitude,
-// 			   	   endereco,
-// 				   pes,
-// 				   detalhes,
-// 				   usu,
-// 				   data_hora_visto);
-//
-//     // transaction t (db -> begin());
-//     // int tmp = db -> persist(den);
-// 	// t -> commit();
-// }
+void DAO::createDenuncia(auto_ptr<database> db){
+    system(CLEAR);
+
+    double latitude;
+    double longitude;
+    string endereco;
+    string pessoa;
+    unsigned int pes;
+    string detalhes;
+    string usuario;
+    unsigned int usu;
+    string data_hora_visto;
+
+    latitude = 30;
+    longitude= 30;
+
+    getchar();
+    cout << "\t\tFormulario de Denuncias: \n\n";
+    cout << "Nome do desaparecido(a): ";
+    getline(cin, pessoa);
+    // lista = dao.getPessoaPeloNome(pessoa);
+
+    cout << "Endereco: ";
+    getline(cin, endereco);
+
+    cout << "Quando ele(a) foi visto(a): ";
+    getline(cin, data_hora_visto);
+
+    cout << "Seu nome: ";
+    getline(cin, usuario);
+
+    cout << "Detalhes: ";
+    getline(cin, detalhes);
+
+    pes = 1;
+    usu = 3;
+
+    denuncia den = denuncia(latitude,
+                   longitude,
+                   endereco,
+                   pes,
+                   detalhes,
+                   usu,
+                   data_hora_visto);
+
+    transaction t (db -> begin());
+    unsigned int id = db -> persist(den);
+    t.commit();
+}
 //
 // void DAO::setDenunciaLatitude(double latitude){
 // 	this -> denuncia.setLatitude(latitude);
@@ -383,7 +381,43 @@ DAO& DAO::getInstance(){
 // string DAO::getUsuarioUltimoAcesso(){
 //     return this -> usuario.getUltimoAcesso();
 // }
-//
+
+void DAO::criaUsuario(auto_ptr<database> db){
+    system(CLEAR);
+    string rg;
+    string cpf;
+    string nome;
+    string sobrenome;
+    string hash_senha = "123456";
+    string data_cadastro = "agora";
+    string ultimo_acesso = "agora";
+
+    cout << "\t\tFormulario de Usuario\n\n";
+
+    cout << "Digite o RG: ";
+    cin >> rg;
+
+    cout << "Digite o CPF: ";
+    cin >> cpf;
+
+    cout << "Digite o nome: ";
+    cin >> nome;
+
+    cout << "Digite o sobrenome: ";
+    cin >> sobrenome;
+
+    usuario usu = usuario(rg, cpf, nome, sobrenome, hash_senha, data_cadastro, ultimo_acesso);
+
+    /* Ponto de falha do carai */
+
+    transaction t(db -> begin());
+
+    db -> persist(usu);
+
+    t.commit();
+    cout << "Usuario criado com sucesso!\n";
+}
+
 // /********************* PAPEL ************************/
 // //SETTERS
 // void DAO::setPapelPapel(int papel){
@@ -399,5 +433,35 @@ DAO& DAO::getInstance(){
 // string DAO::getPapelPermissoes(){
 //     return this -> papel.getPermissoes();
 // }
+
+/*********************************** TRECOS ALEATORIOS **********************************/
+int DAO::verificaLogin(auto_ptr<database> db){
+    system(CLEAR);
+    int id;
+    string senha;
+
+    cout << "Digite seu id: ";
+    cin >> id;
+
+    cout << "Digite sua senha: ";
+    cin >> senha;
+
+    typedef odb::query<usuario> query;
+    typedef odb::result<usuario> result;
+
+    transaction t(db -> begin());
+    result r(db -> query<usuario> (query::id == id and query::hash_senha == senha));
+
+    int ret;
+
+    if(r.size() == 0) ret = -1;
+    else {
+        result::iterator it = r.begin();
+        ret = it -> getID();
+    }
+    t.commit();
+
+    return ret;
+}
 
 #endif

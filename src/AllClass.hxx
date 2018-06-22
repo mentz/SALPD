@@ -31,6 +31,7 @@ private:
 
     #pragma db id auto
 	unsigned long id;
+
 	std::string rg;
 	std::string cpf;
 	std::string nome;
@@ -40,7 +41,15 @@ private:
 	std::string ultimo_acesso;
 public:
     usuario() {};
-	usuario(int id, std::string rg, std::string cpf, std::string nome, std::string sobrenome, std::string hash_senha, std::string data_cadastro, std::string ultimo_acesso);
+	usuario(std::string rg, std::string cpf, std::string nome, std::string sobrenome, std::string hash_senha, std::string data_cadastro, std::string ultimo_acesso){
+			this -> rg = rg;
+			this -> cpf = cpf;
+			this -> nome = nome;
+			this -> sobrenome = sobrenome;
+			this -> hash_senha = hash_senha;
+			this -> data_cadastro = data_cadastro;
+			this -> ultimo_acesso = ultimo_acesso;
+		}
 
 	void setID(int id);
 	void setRG(std::string rg);
@@ -51,7 +60,9 @@ public:
 	void setDataCadastro(std::string data_cadastro);
 	void setUltimoAcesso(std::string ultimo_acesso);
 
-	int getID();
+	int getID(){
+		return this -> id;
+	}
 	std::string getRG();
 	std::string getCPF();
 	std::string getNome();
