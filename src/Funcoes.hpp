@@ -7,21 +7,6 @@
 #include "DAO.hpp"
 //
 // extern Usuario admin;
-void clearConsole(){
-	/* Na verdade não limpa, apenas imprime um bocadinho de
-	 * '\n's para subir a sujeira.
-	 */
-	printf("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
-		   "\n\n      \n\n    \n\n\n      \n\n    \n\n\n\n\n\n\n\n\n\n"
-		   "\n  \n\n\n\n  \n\n  \n  \n\n\n\n  \n\n  \n\n\n\n\n\n\n\n\n"
-		   "\n\n    \n\n  \n\n  \n  \n\n\n\n  \n\n  \n\n\n\n\n\n\n\n\n"
-		   "\n\n\n\n  \n        \n  \n\n\n\n  \n\n  \n\n\n\n\n\n\n\n\n"
-		   "\n      \n\n  \n\n  \n\n      \n\n    \n\n\n\n\n\n\n\n\n\n"
-		   "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
-		   "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
-		   "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
-		   "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
-}
 //
 //
 // Usuario verificaLogin(){
@@ -79,10 +64,11 @@ void menu(auto_ptr<database> db){
 	int sair = 0, user, r;
 	bool logado = false;
 	char ch;
+	string line;
+	stringstream command;
 	while (!sair){
 		int op;
 		system(CLEAR);
-		// clearConsole();
 		// Apresentar opções
 		if(logado and user == 1){
 			menuAdmin(db);
@@ -94,7 +80,9 @@ void menu(auto_ptr<database> db){
 			printf("2 -> Fazer denuncia\n");
 			printf("3 -> Sair\n");
 			cout << "> ";
-			cin >> op;
+			getline(cin, line);
+			command = stringstream(line);
+			command >> op;
 			switch (op) {
 				case 1:
 					r = DAO::getInstance().verificaLogin(db);
@@ -106,13 +94,13 @@ void menu(auto_ptr<database> db){
 				case 2:
 					if(!logado){
 						cout << "Logue no sistema antes!" << endl;
-						cin >> ch;
+						getchar();
 					}
 					else{
 						DAO::getInstance().createDenuncia(db);
 						// dar push_back nessa denuncia??
 						cout << "Denuncia feita com sucesso!" << endl;
-						cin >> ch;
+						getchar();
 					}
 					break;
 				case 3:
@@ -120,6 +108,7 @@ void menu(auto_ptr<database> db){
 					break;
 				default:
 					printf("Digite uma opcao valida!!\n");
+					sair = 1; // Pra não fazer mais o loop feio
 					break;
 			}
 		}

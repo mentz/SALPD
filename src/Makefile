@@ -1,14 +1,14 @@
 FILES = main.cpp
 OUT = salpd
 CC = g++
-FLAGS = -w -std=c++17
+FLAGS = -w -std=c++14
 
-default: build
+default: buildSQL build
 
 build:
-	c++ -c main.cpp $(FLAGS)
-	c++ -c AllClass-odb.cxx $(FLAGS)
-	c++ -o salpd main.o AllClass-odb.o -lodb-pgsql -lodb $(FLAGS)
+	$(CC) -c main.cpp $(FLAGS)
+	$(CC) -c AllClass-odb.cxx $(FLAGS)
+	$(CC) -o salpd main.o AllClass-odb.o -lodb-pgsql -lodb $(FLAGS)
 
 buildSQL:
 	odb -d pgsql --generate-query --generate-schema AllClass.hxx
@@ -19,4 +19,10 @@ connectDB:
 connectApp:
 	./salpd --user qxanfxzw --database qxanfxzw --host elmer.db.elephantsql.com --port 5432 --password ccxuE7Ak3GIXiq05gcVT3vgvwJ7naT8-
 
-.PHONY: default clean build
+clean:
+	-rm *-odb*
+	-rm *.o
+	-rm *.sql
+	-rm ./-.s
+
+.PHONY: default clean build buildSQL
