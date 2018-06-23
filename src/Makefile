@@ -14,10 +14,12 @@ buildSQL:
 	odb -d pgsql --generate-query --generate-schema AllClass.hxx
 
 connectDB:
-	PGPASSWORD=ccxuE7Ak3GIXiq05gcVT3vgvwJ7naT8- psql -h elmer.db.elephantsql.com -d qxanfxzw -U qxanfxzw -p 5432
+	#PGPASSWORD=ccxuE7Ak3GIXiq05gcVT3vgvwJ7naT8- psql -h elmer.db.elephantsql.com -d qxanfxzw -U qxanfxzw -p 5432
+	psql postgres://salpd:banana@127.0.0.1:5432/salpd
 
 connectApp:
-	./salpd --user qxanfxzw --database qxanfxzw --host elmer.db.elephantsql.com --port 5432 --password ccxuE7Ak3GIXiq05gcVT3vgvwJ7naT8-
+	#./salpd --user qxanfxzw --database qxanfxzw --host elmer.db.elephantsql.com --port 5432 --password ccxuE7Ak3GIXiq05gcVT3vgvwJ7naT8-
+	./salpd --user salpd --database salpd --host localhost --port 5432 --password banana
 
 clean:
 	-rm *-odb*
