@@ -264,6 +264,7 @@ public:
 	}
 };
 
+
 //
 // #pragma db value(Denuncia) definition
 
