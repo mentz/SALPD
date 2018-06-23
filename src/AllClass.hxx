@@ -2,9 +2,10 @@
 #define __ALL_CLASS_HXX__
 
 #include <odb/core.hxx>
-#include <string>
 #include <memory>
 #include <iostream>
+#include <cstdlib>
+#include <cstdio>
 
 #pragma db object
 class papel {
@@ -14,8 +15,10 @@ private:
 
 	friend class odb::access;
 
-	std::string permissoes; // Somente descritivo. As restrições em si são implementadas
-					   // no programa ou na base de dados por meio de triggers.
+	// As restrições em si são implementadas no programa com
+	//  base nas restrições apresentadas na forma "rw usuario"
+	//  deste atributo.
+	std::string permissoes;
 public:
     papel() {};
     papel(int, std::string);
@@ -39,6 +42,7 @@ private:
 	std::string hash_senha;
 	std::string data_cadastro;
 	std::string ultimo_acesso;
+	// std::shared_ptr<Permissao> grupo;
 public:
     usuario() {};
 	usuario(std::string rg, std::string cpf, std::string nome, std::string sobrenome, std::string hash_senha, std::string data_cadastro, std::string ultimo_acesso){
@@ -74,6 +78,7 @@ public:
 
 // #pragma db value(Usuario) definition
 
+/*
 #pragma db object
 class usuariopapel{
 private:
@@ -91,7 +96,8 @@ private:
 public:
     usuariopapel() {};
 	usuariopapel(unsigned int usuario, unsigned int papel,
-				 bool valido/*, shared_ptr<Auditoria> auditoria*/);
+				 bool valido);
+	//			 bool valido , shared_ptr<Auditoria> auditoria);
 
 	unsigned int getUsuario();
 	unsigned int getPapel();
@@ -101,6 +107,7 @@ public:
 };
 
 // #pragma db value(UsuarioPapel) definition
+*/
 
 #pragma db object
 class auditoria{

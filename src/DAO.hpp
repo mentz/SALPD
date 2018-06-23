@@ -152,13 +152,19 @@ DAO& DAO::getInstance(){
 // 	this -> denuncia.setID(id);
 // }
 //
+
+
+/*
+	Criar denúncia: inserir informações sobre localização recente
+	de uma pessoa já cadastrada como perdida.
+*/
 int DAO::createDenuncia(shared_ptr<database> db){
     system(CLEAR);
 
     double latitude;
     double longitude;
     string endereco;
-    string pessoa;
+    string nome;
     unsigned int pes;
     string detalhes;
     string usuario;
@@ -172,7 +178,36 @@ int DAO::createDenuncia(shared_ptr<database> db){
     cout << "\t\tFormulario de Denuncias: \n\n";
     cout << "Nome do desaparecido(a): ";
     getline(cin, pessoa);
-    // lista = dao.getPessoaPeloNome(pessoa);
+	stringstream ss;
+	ss << "%" << pessoa << "%";
+	ss >> pessoa;
+	cout << "Buscando pessoas...";
+	try {
+		typedef odb::query<pessoa> pquery;
+		typedef odb::result<pessoa> presult;
+
+		transaction t (db -> begin());
+        presult r (db -> query<pessoa> (pquery::nome.like(pessoa) and pquery::estado == 0));
+		
+		for (result::iterator it = r.begin(); it != r.end(); it++)
+		{
+			cout << it->id << " | " << it->nome << " " << it->sobrenome << endl;
+		}
+		cout << "A pessoa informada está na lista acima?\n"
+		        "Se sim, digite o ID dela e pressione 'ENTER'\n"
+				"Se não, digite -1 e pressione 'ENTER'\n";
+		cin >> pes;
+
+		t.commit();
+	} catch(const odb::exception &e) {
+		cerr << e.what() << endl;
+	}
+
+	if (pes == -1) {
+		cout << "Não é possível inserir denúncia de pessoa não-perdida.\n"
+		        "Pressione 'ENTER' para continuar\n";
+		return 0;
+	}
 
     cout << "Endereco: ";
     getline(cin, endereco);
@@ -180,13 +215,13 @@ int DAO::createDenuncia(shared_ptr<database> db){
     cout << "Quando ele(a) foi visto(a): ";
     getline(cin, data_hora_visto);
 
-    cout << "Seu nome: ";
+    cout << "Seu nome (ou em branco para anonimato):";
     getline(cin, usuario);
+	if (usuario == "") usu = 1; // 1 é usuário anônimo
 
     cout << "Detalhes: ";
     getline(cin, detalhes);
 
-    pes = 1;
     usu = 3;
 
     denuncia den = denuncia(latitude,
@@ -197,16 +232,18 @@ int DAO::createDenuncia(shared_ptr<database> db){
                    usu,
                    data_hora_visto);
 
+	cout << "Inserindo entrada...";
     try {
         transaction t (db -> begin());
         unsigned int id = db -> persist(den);
         t.commit();
+		cout << "OK\nAgradecemos pela sua denúncia.\n\n"
+                "Pressione 'ENTER' para continuar\n";
         return 1;
     } catch(const odb::exception &e){
 		cerr << e.what() << endl;
         return 0;
 	}
-
 }
 
 //

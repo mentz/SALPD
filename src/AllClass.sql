@@ -8,8 +8,6 @@ DROP TABLE IF EXISTS "pessoa" CASCADE;
 
 DROP TABLE IF EXISTS "auditoria" CASCADE;
 
-DROP TABLE IF EXISTS "usuariopapel" CASCADE;
-
 DROP TABLE IF EXISTS "usuario" CASCADE;
 
 DROP TABLE IF EXISTS "papel" CASCADE;
@@ -27,12 +25,6 @@ CREATE TABLE "usuario" (
   "hash_senha" TEXT NOT NULL,
   "data_cadastro" TEXT NOT NULL,
   "ultimo_acesso" TEXT NOT NULL);
-
-CREATE TABLE "usuariopapel" (
-  "id" BIGSERIAL NOT NULL PRIMARY KEY,
-  "usuario" INTEGER NOT NULL,
-  "papel" INTEGER NOT NULL,
-  "valido" BOOLEAN NOT NULL);
 
 CREATE TABLE "auditoria" (
   "id" BIGSERIAL NOT NULL PRIMARY KEY,
