@@ -6,7 +6,7 @@
 #include "AllClass-odb.hxx"
 #include "DAO.hpp"
 
-int user = -1;
+usuario user;
 
 void menuAdmin(shared_ptr<database> db){
 	int sair = 0;
@@ -19,18 +19,19 @@ void menuAdmin(shared_ptr<database> db){
 		system(CLEAR);
 		// clearConsole();
 		// Apresentar opções
-		printf("        Menu do Admin\n\n");
+		printf("\t\tMenu do Admin\n\n");
 		printf("1 -> Criar Usuarios\n");
 		printf("2 -> Sair\n");
 		cout << "> ";
 		cin >> op;
+		getchar();
 		switch (op) {
 			case 1:
 				ret = DAO::getInstance().criaUsuario(db);
 				if(ret){
 					cout << "Usuario criado com sucesso!\n";
 				}
-				cin >> ch;
+				getchar();
 				break;
 			case 2:
 				sair = 1;
@@ -42,37 +43,44 @@ void menuAdmin(shared_ptr<database> db){
 	}
 }
 
-void menuAnonimo(shared_ptr<database> db){
+void menuAnonimo(shared_ptr<database> db, int & sair){
 	int op, ret;
 	char ch;
 	system(CLEAR);
 	// clearConsole();
 	// Apresentar opções
-	printf("        SALPD\n\n");
+	printf("\t\tSALPD\n\n");
 	printf("1 -> Login\n");
-	printf("2 -> Fazer denuncia anônima\n");
-	printf("3 -> Sair\n");
+	printf("2 -> Cadastrar pessoa desaparecida\n");
+	printf("3 -> Fazer denuncia\n");
+	printf("4 -> Sair\n");
 	cout << "> ";
 	cin >> op;
+	getchar();
 	switch (op) {
 		case 1:
 			user = DAO::getInstance().verificaLogin(db);
-			if(user > 0){
+			if(user.getFkPapel() -> getPapel() != ANONIMO){
 				cout << "Login efetuado com sucesso!" << endl;
 			}
 			getchar();
 			break;
 		case 2:
-			ret = DAO::getInstance().createDenuncia(db, user);
-			/*
+			DAO::getInstance().createPessoa(db);
 			if(ret){
-				cout << "Denuncia feita com sucesso!" << endl;
+				cout << "Cadastro feito com sucesso!" << endl;
 			}
-			*/
 			getchar();
 			break;
 		case 3:
-			user = -2;
+			ret = DAO::getInstance().createDenuncia(db, user);
+			if(ret){
+				cout << "Denuncia feita com sucesso!" << endl;
+			}
+			getchar();
+			break;
+		case 4:
+			sair = 1;
 			break;
 		default:
 			printf("Digite uma opcao valida!!\n");
@@ -84,18 +92,16 @@ void menuAnonimo(shared_ptr<database> db){
 //
 
 void menu(shared_ptr<database> db){
-
-	int sair = 0, r;
-	bool logado = false;
-	char ch;
-	while (!sair and user >= -1){
-		switch(user){
+	user = getAnonimo();
+	int sair = 0;
+	while (!sair){
+		switch(user.getFkPapel() -> getPapel()){
 			case ADMIN:
 				menuAdmin(db);
-				user = -1;
+				user = getAnonimo();
 				break;
 			default: //ANONIMO
-				menuAnonimo(db);
+				menuAnonimo(db, sair);
 				break;
 		}
 	}

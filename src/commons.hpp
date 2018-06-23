@@ -19,22 +19,23 @@
 
 #include <odb/pgsql/database.hxx>
 
-#define ADMIN 0
-#define GESTOR 1
-#define AGENTE 2
-#define INFORMANTE 3
-#define ANONIMO 4
+#include "AllClass.hxx"
+
+#define ADMIN 1
+#define GESTOR 2
+#define AGENTE 3
+#define INFORMANTE 4
+#define ANONIMO 5
 
 using namespace odb::core;
 using namespace std;
 
-std::string dateNow(){
-	time_t t = time(0);
-	tm* now = localtime(&t);
-	std::string ret = static_cast<std::ostringstream*>( &(std::ostringstream() << now -> tm_mday))->str() + "-" +
-				      static_cast<std::ostringstream*>( &(std::ostringstream() << (now -> tm_mon + 1)))->str() + "-" +
-					  static_cast<std::ostringstream*>( &(std::ostringstream() << (now -> tm_year + 1900)))->str();
-	return ret;
+time_t getTime(){
+	return time(0);
+}
+
+usuario getAnonimo(){
+	return usuario("", "", "", "", "", getTime(), new papel(ANONIMO, ""));
 }
 
 #ifdef _WIN32

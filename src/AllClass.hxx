@@ -13,62 +13,68 @@
 #pragma db object
 class papel {
 private:
+	friend class odb::access;
+
 	#pragma db id auto
 	unsigned long id;
-
-	friend class odb::access;
 
 	// As restrições em si são implementadas no programa com
 	//  base nas restrições apresentadas na forma "rw usuario"
 	//  deste atributo.
 	std::string permissoes;
 public:
-    papel() {};
-    papel(int, std::string);
+    papel() {}
+    papel(int id, std::string permissoes){
+		this -> id = id;
+		this -> permissoes = permissoes;
+	}
     void setPermissoes(std::string);
-    int getPapel() const;
+    int getPapel() const {
+		return this -> id;
+	}
     std::string getPermissoes() const;
 };
 
 #pragma db object
-class usuario{
+class usuario {
 private:
 	friend class odb::access;
 
     #pragma db id auto
 	unsigned long id;
 
-	std::string rg;
-	std::string cpf;
-	std::string nome;
-	std::string sobrenome;
-	std::string hash_senha;
-	std::string data_cadastro;
-	std::string ultimo_acesso;
-	// std::shared_ptr<Permissao> grupo;
-public:
-    usuario() {};
-	usuario(std::string rg, std::string cpf, std::string nome, std::string sobrenome, std::string hash_senha, std::string data_cadastro, std::string ultimo_acesso){
-			this -> rg = rg;
-			this -> cpf = cpf;
-			this -> nome = nome;
-			this -> sobrenome = sobrenome;
-			this -> hash_senha = hash_senha;
-			this -> data_cadastro = data_cadastro;
-			this -> ultimo_acesso = ultimo_acesso;
-		}
+	#pragma db not_null
+	papel * fk_papel;
 
-	void setID(int id);
-	void setRG(std::string rg);
-	void setCPF(std::string cpf);
-	void setNome(std::string nome);
-	void setSobrenome(std::string sobrenome);
-	void setHashSenha(std::string hash_senha);
-	void setDataCadastro(std::string data_cadastro);
-	void setUltimoAcesso(std::string ultimo_acesso);
+	#pragma db not_null
+	std::string rg;
+	#pragma db not_null
+	std::string cpf;
+	#pragma db not_null
+	std::string nome;
+	#pragma db not_null
+	std::string nome_usuario;
+	#pragma db not_null
+	std::string hash_senha;
+	#pragma db not_null
+	time_t data_cadastro;
+public:
+    usuario() {}
+	usuario(std::string rg, std::string cpf, std::string nome, std::string nome_usuario, std::string hash_senha, time_t data_cadastro, papel * fk_papel){
+		this -> rg = rg;
+		this -> cpf = cpf;
+		this -> nome = nome;
+		this -> nome_usuario = nome_usuario;
+		this -> hash_senha = hash_senha;
+		this -> data_cadastro = data_cadastro;
+		this -> fk_papel = fk_papel;
+	}
 
 	int getID(){
 		return this -> id;
+	}
+	papel * getFkPapel(){
+		return this -> fk_papel;
 	}
 	std::string getRG(){
 		return this -> rg;
@@ -79,119 +85,95 @@ public:
 	std::string getNome(){
 		return this -> nome;
 	}
-	std::string getSobrenome(){
-		return this -> sobrenome;
+	std::string getNomeUsuario(){
+		return this -> nome_usuario;
 	}
 	std::string getHashSenha(){
 		return this -> hash_senha;
 	}
-	std::string getDataCadastro(){
+	time_t getDataCadastro(){
 		return this -> data_cadastro;
 	}
-	std::string getUltimoAcesso();
 };
 
-// #pragma db value(Usuario) definition
-
-/*
-#pragma db object
-class usuariopapel{
-private:
-    friend class odb::access;
-
-    #pragma db id auto
-    unsigned long id;
-
-	unsigned int usuario;
-	unsigned int papel;
-	bool valido;
-public:
-    usuariopapel() {};
-	usuariopapel(unsigned int usuario, unsigned int papel,
-				 bool valido);
-	//			 bool valido , shared_ptr<Auditoria> auditoria);
-
-	unsigned int getUsuario();
-	unsigned int getPapel();
-	// shared_ptr<Auditoria> getAuditoria();
-	bool getValido();
-	bool setValido();
-};
-
-// #pragma db value(UsuarioPapel) definition
-*/
 
 #pragma db object
-class auditoria{
+class auditoria {
 private:
-	// acao: Ação executada pelo usuário
+	friend class odb::access;
+
 	#pragma db id auto
 	unsigned long id;
 
-	friend class odb::access;
-
-	std::string acao;
-	// usuario: Usuário que fez ação
-	unsigned int usuario;
+	#pragma db not_null
+	std::string acao; // acao: Ação executada pelo usuário
+	#pragma db not_null
+	usuario * usuario_acao; // usuario: Usuário que fez ação
+	#pragma db not_null
+	time_t data_hora;
 public:
     auditoria() {};
-	auditoria(std::string acao, unsigned int usuario){
-		this -> acao = "";
-	}
-
-	void setAcao(std::string acao){
+	auditoria(std::string acao, usuario * usuario_acao, time_t data_hora){
 		this -> acao = acao;
-	}
-	void setUsuario(unsigned int usuario){
-		this -> usuario = usuario;
+		this -> usuario_acao = usuario_acao;
+		this -> data_hora = data_hora;
 	}
 
 	std::string getAcao() {
 		return this -> acao;
 	}
-	unsigned int getUsuario(){
-		return this -> usuario;
+	usuario * getUsuario(){
+		return this -> usuario_acao;
 	}
 
 	// TODO completar classe
 };
-//
-// #pragma db value(Auditoria) definition
-//
+
 #pragma db object
 class pessoa {
 private:
+	friend class odb::access;
+
     #pragma db id auto
 	unsigned long id;
 
-    friend class odb::access;
+	#pragma db not_null
+	bool estado;
 
-	// int estado;	// 0 para perdido, 1 para encontrado
-	std::string cpf;
 	std::string rg;
+	std::string cpf;
+
+	#pragma db not_null
 	std::string nome;
-	std::vector<std::string> apelidos;
-	//shared_ptr<Denuncia> ultimo_visto;
-	// unsigned int ultima_modificacao;
+	int idade;
+	#pragma db not_null
+	std::string detalhes;
+	#pragma db not_null
+	time_t data_cadastro;
+	#pragma db not_null
+	time_t ultimo_update;
 public:
 
-	pessoa() {};
-	pessoa(std::string cpf, std::string rg, std::string nome, std::vector<std::string> apelidos){
-		this -> cpf = cpf;
+	pessoa() {}
+	pessoa(std::string nome, std::string detalhes, time_t data_cadastro, std::string rg = "", std::string cpf = "", int idade = -1){
 		this -> rg = rg;
+		this -> cpf = cpf;
 		this -> nome = nome;
-		this -> apelidos = apelidos;
+		this -> detalhes = detalhes;
+		this -> data_cadastro = data_cadastro;
+		this -> ultimo_update = data_cadastro;
+		this -> estado = false;
 	}
 
-	void setID(int id);
-	void setCPF(std::string cpf);
-	void setRG(std::string rg);
-	void setNome(std::string nome);
-	//void setUltimoVisto(shared_ptr<Denuncia> ultimo_visto);
-	// void setUltimaModificacao(unsigned int ultima_modificacao);
+	void changeEstado(bool estado){
+		this -> estado = estado;
+	}
+	void atualizaUpdate(time_t ultimo_update){
+		this -> ultimo_update = ultimo_update;
+	}
 
-	int getID(){
-		return this -> id;
+	std::string getNome(){
+		return this -> nome;
 	}
 	std::string getCPF(){
 		return this -> cpf;
@@ -199,11 +181,7 @@ public:
 	std::string getRG(){
 		return this -> rg;
 	}
-	std::string getNome(){
-		return this -> nome;
-	}
-	//shared_ptr<Denuncia> getUltimoVisto();
-	// unsigned int getUltimaModificacao();
+
 };
 //
 // #pragma db value(Pessoa) definition
@@ -213,63 +191,51 @@ class denuncia {
 private:
     friend class odb::access;
 
+	#pragma db id auto
 	unsigned int id;
 
-	bool valido;
+	#pragma db not_null
+	bool estado; //valido
 
-	#pragma db id
-	unsigned int pessoa;
+	#pragma db not_null
+	pessoa * pessoa_denuncia;
 
-	std::vector<std::string> localizacoes;
-	std::string ultima_localizacao;
-	unsigned int usuario_cadastro;
-	unsigned int usuario_ultima_atualizacao;
-	std::string data_denuncia;
+	#pragma db not_null
+	std::string latitude;
+	#pragma db not_null
+	std::string longitude;
+
+	#pragma db not_null
+	usuario * usuario_denuncia;
+
+	std::string latitude_denuncia;
+	std::string longitude_denuncia;
+
+	#pragma db not_null
+	std::string detalhes;
+
+	#pragma db not_null
+	time_t data_denuncia;
 public:
 	denuncia(){};
-	denuncia(unsigned int pessoa, std::string ultima_localizacao, unsigned int usuario_cadastro, std::string data_denuncia){
-		this -> pessoa = pessoa;
-		this -> ultima_localizacao = ultima_localizacao;
-		this -> localizacoes.push_back(ultima_localizacao);
-		this -> usuario_cadastro = usuario_cadastro;
-		this -> usuario_ultima_atualizacao = usuario_cadastro;
+	denuncia(pessoa * pessoa_denuncia, std::string latitude, std::string longitude, usuario * usuario_denuncia, std::string detalhes, time_t data_denuncia, std::string latitude_denuncia = "", std::string longitude_denuncia = ""){
+		this -> pessoa_denuncia = pessoa_denuncia;
+		this -> latitude = latitude;
+		this -> longitude = longitude;
+		this -> usuario_denuncia = usuario_denuncia;
+		this -> detalhes = detalhes;
 		this -> data_denuncia = data_denuncia;
-		this -> valido = false;
+		this -> latitude_denuncia = latitude_denuncia;
+		this -> longitude_denuncia = longitude_denuncia;
+		this -> estado = false;
 	}
 
-	//SETTERS
-	void setUltimaLocalizacao(std::string ultima_localizacao){
-		this -> ultima_localizacao = ultima_localizacao;
+	void changeEstado(bool estado){
+		this -> estado = estado;
 	}
 
-	void setUsuarioUltimaLocalizacao(unsigned int user){
-		this -> usuario_ultima_atualizacao = user;
-	}
 
-	//GETTERS
-	bool getValido(){
-		return this -> valido;
-	}
-	unsigned int getPessoa(){
-		return this -> pessoa;
-	}
-	std::string getUltimaLocalizacao(){
-		return this -> ultima_localizacao;
-	}
-	unsigned int getUsuarioCadastro(){
-		return this -> usuario_cadastro;
-	}
-	unsigned int getUsuarioUltimaAtualizacao(){
-		return this -> usuario_ultima_atualizacao;
-	}
-	std::string getDataDenuncia(){
-		return this -> data_denuncia;
-	}
 
-	//GERAL
-	void addLocalizacao(std::string localizacao){
-		this -> localizacoes.push_back(localizacao);
-	}
 };
 
 
