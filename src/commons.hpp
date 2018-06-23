@@ -5,10 +5,12 @@
 #include <cstdlib>
 #include <iostream>
 #include <cmath>
+#include <ctime>
 #include <vector>
 #include <string>
 #include <sstream>
 #include <memory>
+#include <utility>
 
 //Senha do bando de dados: ccxuE7Ak3GIXiq05gcVT3vgvwJ7naT8-
 
@@ -25,6 +27,15 @@
 
 using namespace odb::core;
 using namespace std;
+
+std::string dateNow(){
+	time_t t = time(0);
+	tm* now = localtime(&t);
+	std::string ret = static_cast<std::ostringstream*>( &(std::ostringstream() << now -> tm_mday))->str() + "-" +
+				      static_cast<std::ostringstream*>( &(std::ostringstream() << (now -> tm_mon + 1)))->str() + "-" +
+					  static_cast<std::ostringstream*>( &(std::ostringstream() << (now -> tm_year + 1900)))->str();
+	return ret;
+}
 
 #ifdef _WIN32
 	#define CLEAR "cls"

@@ -3220,12 +3220,9 @@ namespace odb
   const unsigned int access::object_traits_impl< ::pessoa, id_pgsql >::
   persist_statement_types[] =
   {
-    pgsql::int4_oid,
     pgsql::text_oid,
     pgsql::text_oid,
-    pgsql::text_oid,
-    pgsql::text_oid,
-    pgsql::int4_oid
+    pgsql::text_oid
   };
 
   const unsigned int access::object_traits_impl< ::pessoa, id_pgsql >::
@@ -3237,28 +3234,336 @@ namespace odb
   const unsigned int access::object_traits_impl< ::pessoa, id_pgsql >::
   update_statement_types[] =
   {
-    pgsql::int4_oid,
     pgsql::text_oid,
     pgsql::text_oid,
     pgsql::text_oid,
-    pgsql::text_oid,
-    pgsql::int4_oid,
     pgsql::int8_oid
   };
 
   struct access::object_traits_impl< ::pessoa, id_pgsql >::extra_statement_cache_type
   {
+    pgsql::container_statements_impl< apelidos_traits > apelidos;
+
     extra_statement_cache_type (
-      pgsql::connection&,
+      pgsql::connection& c,
       image_type&,
       id_image_type&,
+      pgsql::binding& id,
       pgsql::binding&,
-      pgsql::binding&,
-      pgsql::native_binding&,
-      const unsigned int*)
+      pgsql::native_binding& idn,
+      const unsigned int* idt)
+    : apelidos (c, id, idn, idt)
     {
     }
   };
+
+  // apelidos
+  //
+
+  const char access::object_traits_impl< ::pessoa, id_pgsql >::apelidos_traits::
+  select_name[] = "select_pessoa_apelidos";
+
+  const char access::object_traits_impl< ::pessoa, id_pgsql >::apelidos_traits::
+  insert_name[] = "insert_pessoa_apelidos";
+
+  const char access::object_traits_impl< ::pessoa, id_pgsql >::apelidos_traits::
+  delete_name[] = "delete_pessoa_apelidos";
+
+  const unsigned int access::object_traits_impl< ::pessoa, id_pgsql >::apelidos_traits::
+  insert_types[] =
+  {
+    pgsql::int8_oid,
+    pgsql::int8_oid,
+    pgsql::text_oid
+  };
+
+  const char access::object_traits_impl< ::pessoa, id_pgsql >::apelidos_traits::
+  select_statement[] =
+  "SELECT "
+  "\"pessoa_apelidos\".\"index\", "
+  "\"pessoa_apelidos\".\"value\" "
+  "FROM \"pessoa_apelidos\" "
+  "WHERE \"pessoa_apelidos\".\"object_id\"=$1 ORDER BY \"pessoa_apelidos\".\"index\"";
+
+  const char access::object_traits_impl< ::pessoa, id_pgsql >::apelidos_traits::
+  insert_statement[] =
+  "INSERT INTO \"pessoa_apelidos\" "
+  "(\"object_id\", "
+  "\"index\", "
+  "\"value\") "
+  "VALUES "
+  "($1, $2, $3)";
+
+  const char access::object_traits_impl< ::pessoa, id_pgsql >::apelidos_traits::
+  delete_statement[] =
+  "DELETE FROM \"pessoa_apelidos\" "
+  "WHERE \"object_id\"=$1";
+
+  void access::object_traits_impl< ::pessoa, id_pgsql >::apelidos_traits::
+  bind (pgsql::bind* b,
+        const pgsql::bind* id,
+        std::size_t id_size,
+        data_image_type& d)
+  {
+    using namespace pgsql;
+
+    statement_kind sk (statement_select);
+    ODB_POTENTIALLY_UNUSED (sk);
+
+    size_t n (0);
+
+    // object_id
+    //
+    if (id != 0)
+      std::memcpy (&b[n], id, id_size * sizeof (id[0]));
+    n += id_size;
+
+    // index
+    //
+    b[n].type = pgsql::bind::bigint;
+    b[n].buffer = &d.index_value;
+    b[n].is_null = &d.index_null;
+    n++;
+
+    // value
+    //
+    b[n].type = pgsql::bind::text;
+    b[n].buffer = d.value_value.data ();
+    b[n].capacity = d.value_value.capacity ();
+    b[n].size = &d.value_size;
+    b[n].is_null = &d.value_null;
+  }
+
+  void access::object_traits_impl< ::pessoa, id_pgsql >::apelidos_traits::
+  grow (data_image_type& i,
+        bool* t)
+  {
+    bool grew (false);
+
+    // index
+    //
+    t[0UL] = 0;
+
+    // value
+    //
+    if (t[1UL])
+    {
+      i.value_value.capacity (i.value_size);
+      grew = true;
+    }
+
+    if (grew)
+      i.version++;
+  }
+
+  void access::object_traits_impl< ::pessoa, id_pgsql >::apelidos_traits::
+  init (data_image_type& i,
+        index_type* j,
+        const value_type& v)
+  {
+    using namespace pgsql;
+
+    statement_kind sk (statement_insert);
+    ODB_POTENTIALLY_UNUSED (sk);
+
+    bool grew (false);
+
+    // index
+    //
+    if (j != 0)
+    {
+      bool is_null (false);
+      pgsql::value_traits<
+          index_type,
+          pgsql::id_bigint >::set_image (
+        i.index_value, is_null, *j);
+      i.index_null = is_null;
+    }
+
+    // value
+    //
+    {
+      bool is_null (false);
+      std::size_t size (0);
+      std::size_t cap (i.value_value.capacity ());
+      pgsql::value_traits<
+          value_type,
+          pgsql::id_string >::set_image (
+        i.value_value,
+        size,
+        is_null,
+        v);
+      i.value_null = is_null;
+      i.value_size = size;
+      grew = grew || (cap != i.value_value.capacity ());
+    }
+
+    if (grew)
+      i.version++;
+  }
+
+  void access::object_traits_impl< ::pessoa, id_pgsql >::apelidos_traits::
+  init (index_type& j,
+        value_type& v,
+        const data_image_type& i,
+        database* db)
+  {
+    ODB_POTENTIALLY_UNUSED (db);
+
+    // index
+    //
+    {
+      pgsql::value_traits<
+          index_type,
+          pgsql::id_bigint >::set_value (
+        j,
+        i.index_value,
+        i.index_null);
+    }
+
+    // value
+    //
+    {
+      pgsql::value_traits<
+          value_type,
+          pgsql::id_string >::set_value (
+        v,
+        i.value_value,
+        i.value_size,
+        i.value_null);
+    }
+  }
+
+  void access::object_traits_impl< ::pessoa, id_pgsql >::apelidos_traits::
+  insert (index_type i, const value_type& v, void* d)
+  {
+    using namespace pgsql;
+
+    statements_type& sts (*static_cast< statements_type* > (d));
+    data_image_type& di (sts.data_image ());
+
+    init (di, &i, v);
+
+    if (sts.data_binding_test_version ())
+    {
+      const binding& id (sts.id_binding ());
+      bind (sts.data_bind (), id.bind, id.count, di);
+      sts.data_binding_update_version ();
+    }
+
+    if (!sts.insert_statement ().execute ())
+      throw object_already_persistent ();
+  }
+
+  bool access::object_traits_impl< ::pessoa, id_pgsql >::apelidos_traits::
+  select (index_type& i, value_type& v, void* d)
+  {
+    using namespace pgsql;
+    using pgsql::select_statement;
+
+    statements_type& sts (*static_cast< statements_type* > (d));
+    data_image_type& di (sts.data_image ());
+
+    init (i, v, di, &sts.connection ().database ());
+
+    select_statement& st (sts.select_statement ());
+    select_statement::result r (st.fetch ());
+
+    if (r == select_statement::truncated)
+    {
+      grow (di, sts.select_image_truncated ());
+
+      if (sts.data_binding_test_version ())
+      {
+        bind (sts.data_bind (), 0, sts.id_binding ().count, di);
+        sts.data_binding_update_version ();
+        st.refetch ();
+      }
+    }
+
+    return r != select_statement::no_data;
+  }
+
+  void access::object_traits_impl< ::pessoa, id_pgsql >::apelidos_traits::
+  delete_ (void* d)
+  {
+    using namespace pgsql;
+
+    statements_type& sts (*static_cast< statements_type* > (d));
+    sts.delete_statement ().execute ();
+  }
+
+  void access::object_traits_impl< ::pessoa, id_pgsql >::apelidos_traits::
+  persist (const container_type& c,
+           statements_type& sts)
+  {
+    using namespace pgsql;
+
+    functions_type& fs (sts.functions ());
+    fs.ordered_ = true;
+    container_traits_type::persist (c, fs);
+  }
+
+  void access::object_traits_impl< ::pessoa, id_pgsql >::apelidos_traits::
+  load (container_type& c,
+        statements_type& sts)
+  {
+    using namespace pgsql;
+    using pgsql::select_statement;
+
+    const binding& id (sts.id_binding ());
+
+    if (sts.data_binding_test_version ())
+    {
+      bind (sts.data_bind (), id.bind, id.count, sts.data_image ());
+      sts.data_binding_update_version ();
+    }
+
+    select_statement& st (sts.select_statement ());
+    st.execute ();
+    auto_result ar (st);
+    select_statement::result r (st.fetch ());
+
+    if (r == select_statement::truncated)
+    {
+      data_image_type& di (sts.data_image ());
+      grow (di, sts.select_image_truncated ());
+
+      if (sts.data_binding_test_version ())
+      {
+        bind (sts.data_bind (), 0, id.count, di);
+        sts.data_binding_update_version ();
+        st.refetch ();
+      }
+    }
+
+    bool more (r != select_statement::no_data);
+
+    functions_type& fs (sts.functions ());
+    fs.ordered_ = true;
+    container_traits_type::load (c, more, fs);
+  }
+
+  void access::object_traits_impl< ::pessoa, id_pgsql >::apelidos_traits::
+  update (const container_type& c,
+          statements_type& sts)
+  {
+    using namespace pgsql;
+
+    functions_type& fs (sts.functions ());
+    fs.ordered_ = true;
+    container_traits_type::update (c, fs);
+  }
+
+  void access::object_traits_impl< ::pessoa, id_pgsql >::apelidos_traits::
+  erase (statements_type& sts)
+  {
+    using namespace pgsql;
+
+    functions_type& fs (sts.functions ());
+    fs.ordered_ = true;
+    container_traits_type::erase (fs);
+  }
 
   access::object_traits_impl< ::pessoa, id_pgsql >::id_type
   access::object_traits_impl< ::pessoa, id_pgsql >::
@@ -3313,13 +3618,9 @@ namespace odb
     //
     t[0UL] = 0;
 
-    // estado
-    //
-    t[1UL] = 0;
-
     // cpf
     //
-    if (t[2UL])
+    if (t[1UL])
     {
       i.cpf_value.capacity (i.cpf_size);
       grew = true;
@@ -3327,7 +3628,7 @@ namespace odb
 
     // rg
     //
-    if (t[3UL])
+    if (t[2UL])
     {
       i.rg_value.capacity (i.rg_size);
       grew = true;
@@ -3335,23 +3636,11 @@ namespace odb
 
     // nome
     //
-    if (t[4UL])
+    if (t[3UL])
     {
       i.nome_value.capacity (i.nome_size);
       grew = true;
     }
-
-    // sobrenome
-    //
-    if (t[5UL])
-    {
-      i.sobrenome_value.capacity (i.sobrenome_size);
-      grew = true;
-    }
-
-    // ultima_modificacao
-    //
-    t[6UL] = 0;
 
     return grew;
   }
@@ -3376,13 +3665,6 @@ namespace odb
       b[n].is_null = &i.id_null;
       n++;
     }
-
-    // estado
-    //
-    b[n].type = pgsql::bind::integer;
-    b[n].buffer = &i.estado_value;
-    b[n].is_null = &i.estado_null;
-    n++;
 
     // cpf
     //
@@ -3410,22 +3692,6 @@ namespace odb
     b[n].size = &i.nome_size;
     b[n].is_null = &i.nome_null;
     n++;
-
-    // sobrenome
-    //
-    b[n].type = pgsql::bind::text;
-    b[n].buffer = i.sobrenome_value.data ();
-    b[n].capacity = i.sobrenome_value.capacity ();
-    b[n].size = &i.sobrenome_size;
-    b[n].is_null = &i.sobrenome_null;
-    n++;
-
-    // ultima_modificacao
-    //
-    b[n].type = pgsql::bind::integer;
-    b[n].buffer = &i.ultima_modificacao_value;
-    b[n].is_null = &i.ultima_modificacao_null;
-    n++;
   }
 
   void access::object_traits_impl< ::pessoa, id_pgsql >::
@@ -3449,20 +3715,6 @@ namespace odb
     using namespace pgsql;
 
     bool grew (false);
-
-    // estado
-    //
-    {
-      int const& v =
-        o.estado;
-
-      bool is_null (false);
-      pgsql::value_traits<
-          int,
-          pgsql::id_integer >::set_image (
-        i.estado_value, is_null, v);
-      i.estado_null = is_null;
-    }
 
     // cpf
     //
@@ -3527,41 +3779,6 @@ namespace odb
       grew = grew || (cap != i.nome_value.capacity ());
     }
 
-    // sobrenome
-    //
-    {
-      ::std::string const& v =
-        o.sobrenome;
-
-      bool is_null (false);
-      std::size_t size (0);
-      std::size_t cap (i.sobrenome_value.capacity ());
-      pgsql::value_traits<
-          ::std::string,
-          pgsql::id_string >::set_image (
-        i.sobrenome_value,
-        size,
-        is_null,
-        v);
-      i.sobrenome_null = is_null;
-      i.sobrenome_size = size;
-      grew = grew || (cap != i.sobrenome_value.capacity ());
-    }
-
-    // ultima_modificacao
-    //
-    {
-      unsigned int const& v =
-        o.ultima_modificacao;
-
-      bool is_null (false);
-      pgsql::value_traits<
-          unsigned int,
-          pgsql::id_integer >::set_image (
-        i.ultima_modificacao_value, is_null, v);
-      i.ultima_modificacao_null = is_null;
-    }
-
     return grew;
   }
 
@@ -3586,20 +3803,6 @@ namespace odb
         v,
         i.id_value,
         i.id_null);
-    }
-
-    // estado
-    //
-    {
-      int& v =
-        o.estado;
-
-      pgsql::value_traits<
-          int,
-          pgsql::id_integer >::set_value (
-        v,
-        i.estado_value,
-        i.estado_null);
     }
 
     // cpf
@@ -3646,35 +3849,6 @@ namespace odb
         i.nome_size,
         i.nome_null);
     }
-
-    // sobrenome
-    //
-    {
-      ::std::string& v =
-        o.sobrenome;
-
-      pgsql::value_traits<
-          ::std::string,
-          pgsql::id_string >::set_value (
-        v,
-        i.sobrenome_value,
-        i.sobrenome_size,
-        i.sobrenome_null);
-    }
-
-    // ultima_modificacao
-    //
-    {
-      unsigned int& v =
-        o.ultima_modificacao;
-
-      pgsql::value_traits<
-          unsigned int,
-          pgsql::id_integer >::set_value (
-        v,
-        i.ultima_modificacao_value,
-        i.ultima_modificacao_null);
-    }
   }
 
   void access::object_traits_impl< ::pessoa, id_pgsql >::
@@ -3693,38 +3867,29 @@ namespace odb
   const char access::object_traits_impl< ::pessoa, id_pgsql >::persist_statement[] =
   "INSERT INTO \"pessoa\" "
   "(\"id\", "
-  "\"estado\", "
   "\"cpf\", "
   "\"rg\", "
-  "\"nome\", "
-  "\"sobrenome\", "
-  "\"ultima_modificacao\") "
+  "\"nome\") "
   "VALUES "
-  "(DEFAULT, $1, $2, $3, $4, $5, $6) "
+  "(DEFAULT, $1, $2, $3) "
   "RETURNING \"id\"";
 
   const char access::object_traits_impl< ::pessoa, id_pgsql >::find_statement[] =
   "SELECT "
   "\"pessoa\".\"id\", "
-  "\"pessoa\".\"estado\", "
   "\"pessoa\".\"cpf\", "
   "\"pessoa\".\"rg\", "
-  "\"pessoa\".\"nome\", "
-  "\"pessoa\".\"sobrenome\", "
-  "\"pessoa\".\"ultima_modificacao\" "
+  "\"pessoa\".\"nome\" "
   "FROM \"pessoa\" "
   "WHERE \"pessoa\".\"id\"=$1";
 
   const char access::object_traits_impl< ::pessoa, id_pgsql >::update_statement[] =
   "UPDATE \"pessoa\" "
   "SET "
-  "\"estado\"=$1, "
-  "\"cpf\"=$2, "
-  "\"rg\"=$3, "
-  "\"nome\"=$4, "
-  "\"sobrenome\"=$5, "
-  "\"ultima_modificacao\"=$6 "
-  "WHERE \"id\"=$7";
+  "\"cpf\"=$1, "
+  "\"rg\"=$2, "
+  "\"nome\"=$3 "
+  "WHERE \"id\"=$4";
 
   const char access::object_traits_impl< ::pessoa, id_pgsql >::erase_statement[] =
   "DELETE FROM \"pessoa\" "
@@ -3733,12 +3898,9 @@ namespace odb
   const char access::object_traits_impl< ::pessoa, id_pgsql >::query_statement[] =
   "SELECT "
   "\"pessoa\".\"id\", "
-  "\"pessoa\".\"estado\", "
   "\"pessoa\".\"cpf\", "
   "\"pessoa\".\"rg\", "
-  "\"pessoa\".\"nome\", "
-  "\"pessoa\".\"sobrenome\", "
-  "\"pessoa\".\"ultima_modificacao\" "
+  "\"pessoa\".\"nome\" "
   "FROM \"pessoa\"";
 
   const char access::object_traits_impl< ::pessoa, id_pgsql >::erase_query_statement[] =
@@ -3793,6 +3955,30 @@ namespace odb
       throw object_already_persistent ();
 
     obj.id = id (sts.id_image ());
+
+    id_image_type& i (sts.id_image ());
+    init (i, obj.id);
+
+    binding& idb (sts.id_image_binding ());
+    if (i.version != sts.id_image_version () || idb.version == 0)
+    {
+      bind (idb.bind, i);
+      sts.id_image_version (i.version);
+      idb.version++;
+    }
+
+    extra_statement_cache_type& esc (sts.extra_statement_cache ());
+
+    // apelidos
+    //
+    {
+      ::std::vector< ::std::basic_string< char > > const& v =
+        obj.apelidos;
+
+      apelidos_traits::persist (
+        v,
+        esc.apelidos);
+    }
 
     callback (db,
               static_cast<const object_type&> (obj),
@@ -3856,6 +4042,19 @@ namespace odb
     if (st.execute () == 0)
       throw object_not_persistent ();
 
+    extra_statement_cache_type& esc (sts.extra_statement_cache ());
+
+    // apelidos
+    //
+    {
+      ::std::vector< ::std::basic_string< char > > const& v =
+        obj.apelidos;
+
+      apelidos_traits::update (
+        v,
+        esc.apelidos);
+    }
+
     callback (db, obj, callback_event::post_update);
     pointer_cache_traits::update (db, obj);
   }
@@ -3882,6 +4081,13 @@ namespace odb
       sts.id_image_version (i.version);
       idb.version++;
     }
+
+    extra_statement_cache_type& esc (sts.extra_statement_cache ());
+
+    // apelidos
+    //
+    apelidos_traits::erase (
+      esc.apelidos);
 
     if (sts.erase_statement ().execute () != 1)
       throw object_not_persistent ();
@@ -4059,6 +4265,27 @@ namespace odb
     return r != select_statement::no_data;
   }
 
+  void access::object_traits_impl< ::pessoa, id_pgsql >::
+  load_ (statements_type& sts,
+         object_type& obj,
+         bool reload)
+  {
+    ODB_POTENTIALLY_UNUSED (reload);
+
+    extra_statement_cache_type& esc (sts.extra_statement_cache ());
+
+    // apelidos
+    //
+    {
+      ::std::vector< ::std::basic_string< char > >& v =
+        obj.apelidos;
+
+      apelidos_traits::load (
+        v,
+        esc.apelidos);
+    }
+  }
+
   result< access::object_traits_impl< ::pessoa, id_pgsql >::object_type >
   access::object_traits_impl< ::pessoa, id_pgsql >::
   query (database&, const query_base_type& q)
@@ -4165,11 +4392,11 @@ namespace odb
   const unsigned int access::object_traits_impl< ::denuncia, id_pgsql >::
   persist_statement_types[] =
   {
-    pgsql::float8_oid,
-    pgsql::float8_oid,
-    pgsql::text_oid,
+    pgsql::int4_oid,
+    pgsql::bool_oid,
     pgsql::int4_oid,
     pgsql::text_oid,
+    pgsql::int4_oid,
     pgsql::int4_oid,
     pgsql::text_oid
   };
@@ -4183,11 +4410,10 @@ namespace odb
   const unsigned int access::object_traits_impl< ::denuncia, id_pgsql >::
   update_statement_types[] =
   {
-    pgsql::float8_oid,
-    pgsql::float8_oid,
+    pgsql::int4_oid,
+    pgsql::bool_oid,
     pgsql::text_oid,
     pgsql::int4_oid,
-    pgsql::text_oid,
     pgsql::int4_oid,
     pgsql::text_oid,
     pgsql::int4_oid
@@ -4195,36 +4421,327 @@ namespace odb
 
   struct access::object_traits_impl< ::denuncia, id_pgsql >::extra_statement_cache_type
   {
+    pgsql::container_statements_impl< localizacoes_traits > localizacoes;
+
     extra_statement_cache_type (
-      pgsql::connection&,
+      pgsql::connection& c,
       image_type&,
       id_image_type&,
+      pgsql::binding& id,
       pgsql::binding&,
-      pgsql::binding&,
-      pgsql::native_binding&,
-      const unsigned int*)
+      pgsql::native_binding& idn,
+      const unsigned int* idt)
+    : localizacoes (c, id, idn, idt)
     {
     }
   };
 
-  access::object_traits_impl< ::denuncia, id_pgsql >::id_type
-  access::object_traits_impl< ::denuncia, id_pgsql >::
-  id (const id_image_type& i)
-  {
-    pgsql::database* db (0);
-    ODB_POTENTIALLY_UNUSED (db);
+  // localizacoes
+  //
 
-    id_type id;
+  const char access::object_traits_impl< ::denuncia, id_pgsql >::localizacoes_traits::
+  select_name[] = "select_denuncia_localizacoes";
+
+  const char access::object_traits_impl< ::denuncia, id_pgsql >::localizacoes_traits::
+  insert_name[] = "insert_denuncia_localizacoes";
+
+  const char access::object_traits_impl< ::denuncia, id_pgsql >::localizacoes_traits::
+  delete_name[] = "delete_denuncia_localizacoes";
+
+  const unsigned int access::object_traits_impl< ::denuncia, id_pgsql >::localizacoes_traits::
+  insert_types[] =
+  {
+    pgsql::int4_oid,
+    pgsql::int8_oid,
+    pgsql::text_oid
+  };
+
+  const char access::object_traits_impl< ::denuncia, id_pgsql >::localizacoes_traits::
+  select_statement[] =
+  "SELECT "
+  "\"denuncia_localizacoes\".\"index\", "
+  "\"denuncia_localizacoes\".\"value\" "
+  "FROM \"denuncia_localizacoes\" "
+  "WHERE \"denuncia_localizacoes\".\"object_id\"=$1 ORDER BY \"denuncia_localizacoes\".\"index\"";
+
+  const char access::object_traits_impl< ::denuncia, id_pgsql >::localizacoes_traits::
+  insert_statement[] =
+  "INSERT INTO \"denuncia_localizacoes\" "
+  "(\"object_id\", "
+  "\"index\", "
+  "\"value\") "
+  "VALUES "
+  "($1, $2, $3)";
+
+  const char access::object_traits_impl< ::denuncia, id_pgsql >::localizacoes_traits::
+  delete_statement[] =
+  "DELETE FROM \"denuncia_localizacoes\" "
+  "WHERE \"object_id\"=$1";
+
+  void access::object_traits_impl< ::denuncia, id_pgsql >::localizacoes_traits::
+  bind (pgsql::bind* b,
+        const pgsql::bind* id,
+        std::size_t id_size,
+        data_image_type& d)
+  {
+    using namespace pgsql;
+
+    statement_kind sk (statement_select);
+    ODB_POTENTIALLY_UNUSED (sk);
+
+    size_t n (0);
+
+    // object_id
+    //
+    if (id != 0)
+      std::memcpy (&b[n], id, id_size * sizeof (id[0]));
+    n += id_size;
+
+    // index
+    //
+    b[n].type = pgsql::bind::bigint;
+    b[n].buffer = &d.index_value;
+    b[n].is_null = &d.index_null;
+    n++;
+
+    // value
+    //
+    b[n].type = pgsql::bind::text;
+    b[n].buffer = d.value_value.data ();
+    b[n].capacity = d.value_value.capacity ();
+    b[n].size = &d.value_size;
+    b[n].is_null = &d.value_null;
+  }
+
+  void access::object_traits_impl< ::denuncia, id_pgsql >::localizacoes_traits::
+  grow (data_image_type& i,
+        bool* t)
+  {
+    bool grew (false);
+
+    // index
+    //
+    t[0UL] = 0;
+
+    // value
+    //
+    if (t[1UL])
     {
-      pgsql::value_traits<
-          unsigned int,
-          pgsql::id_integer >::set_value (
-        id,
-        i.id_value,
-        i.id_null);
+      i.value_value.capacity (i.value_size);
+      grew = true;
     }
 
-    return id;
+    if (grew)
+      i.version++;
+  }
+
+  void access::object_traits_impl< ::denuncia, id_pgsql >::localizacoes_traits::
+  init (data_image_type& i,
+        index_type* j,
+        const value_type& v)
+  {
+    using namespace pgsql;
+
+    statement_kind sk (statement_insert);
+    ODB_POTENTIALLY_UNUSED (sk);
+
+    bool grew (false);
+
+    // index
+    //
+    if (j != 0)
+    {
+      bool is_null (false);
+      pgsql::value_traits<
+          index_type,
+          pgsql::id_bigint >::set_image (
+        i.index_value, is_null, *j);
+      i.index_null = is_null;
+    }
+
+    // value
+    //
+    {
+      bool is_null (false);
+      std::size_t size (0);
+      std::size_t cap (i.value_value.capacity ());
+      pgsql::value_traits<
+          value_type,
+          pgsql::id_string >::set_image (
+        i.value_value,
+        size,
+        is_null,
+        v);
+      i.value_null = is_null;
+      i.value_size = size;
+      grew = grew || (cap != i.value_value.capacity ());
+    }
+
+    if (grew)
+      i.version++;
+  }
+
+  void access::object_traits_impl< ::denuncia, id_pgsql >::localizacoes_traits::
+  init (index_type& j,
+        value_type& v,
+        const data_image_type& i,
+        database* db)
+  {
+    ODB_POTENTIALLY_UNUSED (db);
+
+    // index
+    //
+    {
+      pgsql::value_traits<
+          index_type,
+          pgsql::id_bigint >::set_value (
+        j,
+        i.index_value,
+        i.index_null);
+    }
+
+    // value
+    //
+    {
+      pgsql::value_traits<
+          value_type,
+          pgsql::id_string >::set_value (
+        v,
+        i.value_value,
+        i.value_size,
+        i.value_null);
+    }
+  }
+
+  void access::object_traits_impl< ::denuncia, id_pgsql >::localizacoes_traits::
+  insert (index_type i, const value_type& v, void* d)
+  {
+    using namespace pgsql;
+
+    statements_type& sts (*static_cast< statements_type* > (d));
+    data_image_type& di (sts.data_image ());
+
+    init (di, &i, v);
+
+    if (sts.data_binding_test_version ())
+    {
+      const binding& id (sts.id_binding ());
+      bind (sts.data_bind (), id.bind, id.count, di);
+      sts.data_binding_update_version ();
+    }
+
+    if (!sts.insert_statement ().execute ())
+      throw object_already_persistent ();
+  }
+
+  bool access::object_traits_impl< ::denuncia, id_pgsql >::localizacoes_traits::
+  select (index_type& i, value_type& v, void* d)
+  {
+    using namespace pgsql;
+    using pgsql::select_statement;
+
+    statements_type& sts (*static_cast< statements_type* > (d));
+    data_image_type& di (sts.data_image ());
+
+    init (i, v, di, &sts.connection ().database ());
+
+    select_statement& st (sts.select_statement ());
+    select_statement::result r (st.fetch ());
+
+    if (r == select_statement::truncated)
+    {
+      grow (di, sts.select_image_truncated ());
+
+      if (sts.data_binding_test_version ())
+      {
+        bind (sts.data_bind (), 0, sts.id_binding ().count, di);
+        sts.data_binding_update_version ();
+        st.refetch ();
+      }
+    }
+
+    return r != select_statement::no_data;
+  }
+
+  void access::object_traits_impl< ::denuncia, id_pgsql >::localizacoes_traits::
+  delete_ (void* d)
+  {
+    using namespace pgsql;
+
+    statements_type& sts (*static_cast< statements_type* > (d));
+    sts.delete_statement ().execute ();
+  }
+
+  void access::object_traits_impl< ::denuncia, id_pgsql >::localizacoes_traits::
+  persist (const container_type& c,
+           statements_type& sts)
+  {
+    using namespace pgsql;
+
+    functions_type& fs (sts.functions ());
+    fs.ordered_ = true;
+    container_traits_type::persist (c, fs);
+  }
+
+  void access::object_traits_impl< ::denuncia, id_pgsql >::localizacoes_traits::
+  load (container_type& c,
+        statements_type& sts)
+  {
+    using namespace pgsql;
+    using pgsql::select_statement;
+
+    const binding& id (sts.id_binding ());
+
+    if (sts.data_binding_test_version ())
+    {
+      bind (sts.data_bind (), id.bind, id.count, sts.data_image ());
+      sts.data_binding_update_version ();
+    }
+
+    select_statement& st (sts.select_statement ());
+    st.execute ();
+    auto_result ar (st);
+    select_statement::result r (st.fetch ());
+
+    if (r == select_statement::truncated)
+    {
+      data_image_type& di (sts.data_image ());
+      grow (di, sts.select_image_truncated ());
+
+      if (sts.data_binding_test_version ())
+      {
+        bind (sts.data_bind (), 0, id.count, di);
+        sts.data_binding_update_version ();
+        st.refetch ();
+      }
+    }
+
+    bool more (r != select_statement::no_data);
+
+    functions_type& fs (sts.functions ());
+    fs.ordered_ = true;
+    container_traits_type::load (c, more, fs);
+  }
+
+  void access::object_traits_impl< ::denuncia, id_pgsql >::localizacoes_traits::
+  update (const container_type& c,
+          statements_type& sts)
+  {
+    using namespace pgsql;
+
+    functions_type& fs (sts.functions ());
+    fs.ordered_ = true;
+    container_traits_type::update (c, fs);
+  }
+
+  void access::object_traits_impl< ::denuncia, id_pgsql >::localizacoes_traits::
+  erase (statements_type& sts)
+  {
+    using namespace pgsql;
+
+    functions_type& fs (sts.functions ());
+    fs.ordered_ = true;
+    container_traits_type::erase (fs);
   }
 
   access::object_traits_impl< ::denuncia, id_pgsql >::id_type
@@ -4240,8 +4757,8 @@ namespace odb
           unsigned int,
           pgsql::id_integer >::set_value (
         id,
-        i.id_value,
-        i.id_null);
+        i.pessoa_value,
+        i.pessoa_null);
     }
 
     return id;
@@ -4260,43 +4777,35 @@ namespace odb
     //
     t[0UL] = 0;
 
-    // latitude
+    // valido
     //
     t[1UL] = 0;
 
-    // longitude
+    // pessoa
     //
     t[2UL] = 0;
 
-    // endereco
+    // ultima_localizacao
     //
     if (t[3UL])
     {
-      i.endereco_value.capacity (i.endereco_size);
+      i.ultima_localizacao_value.capacity (i.ultima_localizacao_size);
       grew = true;
     }
 
-    // pessoa
+    // usuario_cadastro
     //
     t[4UL] = 0;
 
-    // detalhes
+    // usuario_ultima_atualizacao
     //
-    if (t[5UL])
-    {
-      i.detalhes_value.capacity (i.detalhes_size);
-      grew = true;
-    }
+    t[5UL] = 0;
 
-    // usuario
+    // data_denuncia
     //
-    t[6UL] = 0;
-
-    // data_hora_visto
-    //
-    if (t[7UL])
+    if (t[6UL])
     {
-      i.data_hora_visto_value.capacity (i.data_hora_visto_size);
+      i.data_denuncia_value.capacity (i.data_denuncia_size);
       grew = true;
     }
 
@@ -4316,67 +4825,58 @@ namespace odb
 
     // id
     //
-    if (sk != statement_insert && sk != statement_update)
-    {
-      b[n].type = pgsql::bind::integer;
-      b[n].buffer = &i.id_value;
-      b[n].is_null = &i.id_null;
-      n++;
-    }
-
-    // latitude
-    //
-    b[n].type = pgsql::bind::double_;
-    b[n].buffer = &i.latitude_value;
-    b[n].is_null = &i.latitude_null;
+    b[n].type = pgsql::bind::integer;
+    b[n].buffer = &i.id_value;
+    b[n].is_null = &i.id_null;
     n++;
 
-    // longitude
+    // valido
     //
-    b[n].type = pgsql::bind::double_;
-    b[n].buffer = &i.longitude_value;
-    b[n].is_null = &i.longitude_null;
-    n++;
-
-    // endereco
-    //
-    b[n].type = pgsql::bind::text;
-    b[n].buffer = i.endereco_value.data ();
-    b[n].capacity = i.endereco_value.capacity ();
-    b[n].size = &i.endereco_size;
-    b[n].is_null = &i.endereco_null;
+    b[n].type = pgsql::bind::boolean_;
+    b[n].buffer = &i.valido_value;
+    b[n].is_null = &i.valido_null;
     n++;
 
     // pessoa
     //
-    b[n].type = pgsql::bind::integer;
-    b[n].buffer = &i.pessoa_value;
-    b[n].is_null = &i.pessoa_null;
-    n++;
+    if (sk != statement_update)
+    {
+      b[n].type = pgsql::bind::integer;
+      b[n].buffer = &i.pessoa_value;
+      b[n].is_null = &i.pessoa_null;
+      n++;
+    }
 
-    // detalhes
+    // ultima_localizacao
     //
     b[n].type = pgsql::bind::text;
-    b[n].buffer = i.detalhes_value.data ();
-    b[n].capacity = i.detalhes_value.capacity ();
-    b[n].size = &i.detalhes_size;
-    b[n].is_null = &i.detalhes_null;
+    b[n].buffer = i.ultima_localizacao_value.data ();
+    b[n].capacity = i.ultima_localizacao_value.capacity ();
+    b[n].size = &i.ultima_localizacao_size;
+    b[n].is_null = &i.ultima_localizacao_null;
     n++;
 
-    // usuario
+    // usuario_cadastro
     //
     b[n].type = pgsql::bind::integer;
-    b[n].buffer = &i.usuario_value;
-    b[n].is_null = &i.usuario_null;
+    b[n].buffer = &i.usuario_cadastro_value;
+    b[n].is_null = &i.usuario_cadastro_null;
     n++;
 
-    // data_hora_visto
+    // usuario_ultima_atualizacao
+    //
+    b[n].type = pgsql::bind::integer;
+    b[n].buffer = &i.usuario_ultima_atualizacao_value;
+    b[n].is_null = &i.usuario_ultima_atualizacao_null;
+    n++;
+
+    // data_denuncia
     //
     b[n].type = pgsql::bind::text;
-    b[n].buffer = i.data_hora_visto_value.data ();
-    b[n].capacity = i.data_hora_visto_value.capacity ();
-    b[n].size = &i.data_hora_visto_size;
-    b[n].is_null = &i.data_hora_visto_null;
+    b[n].buffer = i.data_denuncia_value.data ();
+    b[n].capacity = i.data_denuncia_value.capacity ();
+    b[n].size = &i.data_denuncia_size;
+    b[n].is_null = &i.data_denuncia_null;
     n++;
   }
 
@@ -4402,57 +4902,37 @@ namespace odb
 
     bool grew (false);
 
-    // latitude
+    // id
     //
     {
-      double const& v =
-        o.latitude;
+      unsigned int const& v =
+        o.id;
 
       bool is_null (false);
       pgsql::value_traits<
-          double,
-          pgsql::id_double >::set_image (
-        i.latitude_value, is_null, v);
-      i.latitude_null = is_null;
+          unsigned int,
+          pgsql::id_integer >::set_image (
+        i.id_value, is_null, v);
+      i.id_null = is_null;
     }
 
-    // longitude
+    // valido
     //
     {
-      double const& v =
-        o.longitude;
+      bool const& v =
+        o.valido;
 
       bool is_null (false);
       pgsql::value_traits<
-          double,
-          pgsql::id_double >::set_image (
-        i.longitude_value, is_null, v);
-      i.longitude_null = is_null;
-    }
-
-    // endereco
-    //
-    {
-      ::std::string const& v =
-        o.endereco;
-
-      bool is_null (false);
-      std::size_t size (0);
-      std::size_t cap (i.endereco_value.capacity ());
-      pgsql::value_traits<
-          ::std::string,
-          pgsql::id_string >::set_image (
-        i.endereco_value,
-        size,
-        is_null,
-        v);
-      i.endereco_null = is_null;
-      i.endereco_size = size;
-      grew = grew || (cap != i.endereco_value.capacity ());
+          bool,
+          pgsql::id_boolean >::set_image (
+        i.valido_value, is_null, v);
+      i.valido_null = is_null;
     }
 
     // pessoa
     //
+    if (sk == statement_insert)
     {
       unsigned int const& v =
         o.pessoa;
@@ -4465,60 +4945,74 @@ namespace odb
       i.pessoa_null = is_null;
     }
 
-    // detalhes
+    // ultima_localizacao
     //
     {
       ::std::string const& v =
-        o.detalhes;
+        o.ultima_localizacao;
 
       bool is_null (false);
       std::size_t size (0);
-      std::size_t cap (i.detalhes_value.capacity ());
+      std::size_t cap (i.ultima_localizacao_value.capacity ());
       pgsql::value_traits<
           ::std::string,
           pgsql::id_string >::set_image (
-        i.detalhes_value,
+        i.ultima_localizacao_value,
         size,
         is_null,
         v);
-      i.detalhes_null = is_null;
-      i.detalhes_size = size;
-      grew = grew || (cap != i.detalhes_value.capacity ());
+      i.ultima_localizacao_null = is_null;
+      i.ultima_localizacao_size = size;
+      grew = grew || (cap != i.ultima_localizacao_value.capacity ());
     }
 
-    // usuario
+    // usuario_cadastro
     //
     {
       unsigned int const& v =
-        o.usuario;
+        o.usuario_cadastro;
 
       bool is_null (false);
       pgsql::value_traits<
           unsigned int,
           pgsql::id_integer >::set_image (
-        i.usuario_value, is_null, v);
-      i.usuario_null = is_null;
+        i.usuario_cadastro_value, is_null, v);
+      i.usuario_cadastro_null = is_null;
     }
 
-    // data_hora_visto
+    // usuario_ultima_atualizacao
+    //
+    {
+      unsigned int const& v =
+        o.usuario_ultima_atualizacao;
+
+      bool is_null (false);
+      pgsql::value_traits<
+          unsigned int,
+          pgsql::id_integer >::set_image (
+        i.usuario_ultima_atualizacao_value, is_null, v);
+      i.usuario_ultima_atualizacao_null = is_null;
+    }
+
+    // data_denuncia
     //
     {
       ::std::string const& v =
-        o.data_hora_visto;
+        o.data_denuncia;
 
       bool is_null (false);
       std::size_t size (0);
-      std::size_t cap (i.data_hora_visto_value.capacity ());
+      std::size_t cap (i.data_denuncia_value.capacity ());
       pgsql::value_traits<
           ::std::string,
           pgsql::id_string >::set_image (
-        i.data_hora_visto_value,
+        i.data_denuncia_value,
         size,
         is_null,
         v);
-      i.data_hora_visto_null = is_null;
-      i.data_hora_visto_size = size;
-      grew = grew || (cap != i.data_hora_visto_value.capacity ());
+      i.data_denuncia_null = is_null;
+      i.data_denuncia_size = size;
+      grew = grew || (cap != i.data_denuncia_value.capacity ());
     }
 
     return grew;
@@ -4547,47 +5041,18 @@ namespace odb
         i.id_null);
     }
 
-    // latitude
+    // valido
     //
     {
-      double& v =
-        o.latitude;
+      bool& v =
+        o.valido;
 
       pgsql::value_traits<
-          double,
-          pgsql::id_double >::set_value (
+          bool,
+          pgsql::id_boolean >::set_value (
         v,
-        i.latitude_value,
-        i.latitude_null);
-    }
-
-    // longitude
-    //
-    {
-      double& v =
-        o.longitude;
-
-      pgsql::value_traits<
-          double,
-          pgsql::id_double >::set_value (
-        v,
-        i.longitude_value,
-        i.longitude_null);
-    }
-
-    // endereco
-    //
-    {
-      ::std::string& v =
-        o.endereco;
-
-      pgsql::value_traits<
-          ::std::string,
-          pgsql::id_string >::set_value (
-        v,
-        i.endereco_value,
-        i.endereco_size,
-        i.endereco_null);
+        i.valido_value,
+        i.valido_null);
     }
 
     // pessoa
@@ -4604,48 +5069,62 @@ namespace odb
         i.pessoa_null);
     }
 
-    // detalhes
+    // ultima_localizacao
     //
     {
       ::std::string& v =
-        o.detalhes;
+        o.ultima_localizacao;
 
       pgsql::value_traits<
           ::std::string,
           pgsql::id_string >::set_value (
         v,
-        i.detalhes_value,
-        i.detalhes_size,
-        i.detalhes_null);
+        i.ultima_localizacao_value,
+        i.ultima_localizacao_size,
+        i.ultima_localizacao_null);
     }
 
-    // usuario
+    // usuario_cadastro
     //
     {
       unsigned int& v =
-        o.usuario;
+        o.usuario_cadastro;
 
       pgsql::value_traits<
           unsigned int,
           pgsql::id_integer >::set_value (
         v,
-        i.usuario_value,
-        i.usuario_null);
+        i.usuario_cadastro_value,
+        i.usuario_cadastro_null);
     }
 
-    // data_hora_visto
+    // usuario_ultima_atualizacao
+    //
+    {
+      unsigned int& v =
+        o.usuario_ultima_atualizacao;
+
+      pgsql::value_traits<
+          unsigned int,
+          pgsql::id_integer >::set_value (
+        v,
+        i.usuario_ultima_atualizacao_value,
+        i.usuario_ultima_atualizacao_null);
+    }
+
+    // data_denuncia
     //
     {
       ::std::string& v =
-        o.data_hora_visto;
+        o.data_denuncia;
 
       pgsql::value_traits<
           ::std::string,
           pgsql::id_string >::set_value (
         v,
-        i.data_hora_visto_value,
-        i.data_hora_visto_size,
-        i.data_hora_visto_null);
+        i.data_denuncia_value,
+        i.data_denuncia_size,
+        i.data_denuncia_null);
     }
   }
 
@@ -4665,56 +5144,51 @@ namespace odb
   const char access::object_traits_impl< ::denuncia, id_pgsql >::persist_statement[] =
   "INSERT INTO \"denuncia\" "
   "(\"id\", "
-  "\"latitude\", "
-  "\"longitude\", "
-  "\"endereco\", "
+  "\"valido\", "
   "\"pessoa\", "
-  "\"detalhes\", "
-  "\"usuario\", "
-  "\"data_hora_visto\") "
+  "\"ultima_localizacao\", "
+  "\"usuario_cadastro\", "
+  "\"usuario_ultima_atualizacao\", "
+  "\"data_denuncia\") "
   "VALUES "
-  "(DEFAULT, $1, $2, $3, $4, $5, $6, $7) "
-  "RETURNING \"id\"";
+  "($1, $2, $3, $4, $5, $6, $7)";
 
   const char access::object_traits_impl< ::denuncia, id_pgsql >::find_statement[] =
   "SELECT "
   "\"denuncia\".\"id\", "
-  "\"denuncia\".\"latitude\", "
-  "\"denuncia\".\"longitude\", "
-  "\"denuncia\".\"endereco\", "
+  "\"denuncia\".\"valido\", "
   "\"denuncia\".\"pessoa\", "
-  "\"denuncia\".\"detalhes\", "
-  "\"denuncia\".\"usuario\", "
-  "\"denuncia\".\"data_hora_visto\" "
+  "\"denuncia\".\"ultima_localizacao\", "
+  "\"denuncia\".\"usuario_cadastro\", "
+  "\"denuncia\".\"usuario_ultima_atualizacao\", "
+  "\"denuncia\".\"data_denuncia\" "
   "FROM \"denuncia\" "
-  "WHERE \"denuncia\".\"id\"=$1";
+  "WHERE \"denuncia\".\"pessoa\"=$1";
 
   const char access::object_traits_impl< ::denuncia, id_pgsql >::update_statement[] =
   "UPDATE \"denuncia\" "
   "SET "
-  "\"latitude\"=$1, "
-  "\"longitude\"=$2, "
-  "\"endereco\"=$3, "
-  "\"pessoa\"=$4, "
-  "\"detalhes\"=$5, "
-  "\"usuario\"=$6, "
-  "\"data_hora_visto\"=$7 "
-  "WHERE \"id\"=$8";
+  "\"id\"=$1, "
+  "\"valido\"=$2, "
+  "\"ultima_localizacao\"=$3, "
+  "\"usuario_cadastro\"=$4, "
+  "\"usuario_ultima_atualizacao\"=$5, "
+  "\"data_denuncia\"=$6 "
+  "WHERE \"pessoa\"=$7";
 
   const char access::object_traits_impl< ::denuncia, id_pgsql >::erase_statement[] =
   "DELETE FROM \"denuncia\" "
-  "WHERE \"id\"=$1";
+  "WHERE \"pessoa\"=$1";
 
   const char access::object_traits_impl< ::denuncia, id_pgsql >::query_statement[] =
   "SELECT "
   "\"denuncia\".\"id\", "
-  "\"denuncia\".\"latitude\", "
-  "\"denuncia\".\"longitude\", "
-  "\"denuncia\".\"endereco\", "
+  "\"denuncia\".\"valido\", "
   "\"denuncia\".\"pessoa\", "
-  "\"denuncia\".\"detalhes\", "
-  "\"denuncia\".\"usuario\", "
-  "\"denuncia\".\"data_hora_visto\" "
+  "\"denuncia\".\"ultima_localizacao\", "
+  "\"denuncia\".\"usuario_cadastro\", "
+  "\"denuncia\".\"usuario_ultima_atualizacao\", "
+  "\"denuncia\".\"data_denuncia\" "
   "FROM \"denuncia\"";
 
   const char access::object_traits_impl< ::denuncia, id_pgsql >::erase_query_statement[] =
@@ -4724,7 +5198,7 @@ namespace odb
   "\"denuncia\"";
 
   void access::object_traits_impl< ::denuncia, id_pgsql >::
-  persist (database& db, object_type& obj)
+  persist (database& db, const object_type& obj)
   {
     ODB_POTENTIALLY_UNUSED (db);
 
@@ -4736,7 +5210,7 @@ namespace odb
       conn.statement_cache ().find_object<object_type> ());
 
     callback (db,
-              static_cast<const object_type&> (obj),
+              obj,
               callback_event::pre_persist);
 
     image_type& im (sts.image ());
@@ -4753,25 +5227,36 @@ namespace odb
       imb.version++;
     }
 
-    {
-      id_image_type& i (sts.id_image ());
-      binding& b (sts.id_image_binding ());
-      if (i.version != sts.id_image_version () || b.version == 0)
-      {
-        bind (b.bind, i);
-        sts.id_image_version (i.version);
-        b.version++;
-      }
-    }
-
     insert_statement& st (sts.persist_statement ());
     if (!st.execute ())
       throw object_already_persistent ();
 
-    obj.id = id (sts.id_image ());
+    id_image_type& i (sts.id_image ());
+    init (i, obj.pessoa);
+
+    binding& idb (sts.id_image_binding ());
+    if (i.version != sts.id_image_version () || idb.version == 0)
+    {
+      bind (idb.bind, i);
+      sts.id_image_version (i.version);
+      idb.version++;
+    }
+
+    extra_statement_cache_type& esc (sts.extra_statement_cache ());
+
+    // localizacoes
+    //
+    {
+      ::std::vector< ::std::basic_string< char > > const& v =
+        obj.localizacoes;
+
+      localizacoes_traits::persist (
+        v,
+        esc.localizacoes);
+    }
 
     callback (db,
-              static_cast<const object_type&> (obj),
+              obj,
               callback_event::post_persist);
   }
 
@@ -4791,7 +5276,7 @@ namespace odb
       conn.statement_cache ().find_object<object_type> ());
 
     const id_type& id (
-      obj.id);
+      obj.pessoa);
     id_image_type& idi (sts.id_image ());
     init (idi, id);
 
@@ -4832,6 +5317,19 @@ namespace odb
     if (st.execute () == 0)
       throw object_not_persistent ();
 
+    extra_statement_cache_type& esc (sts.extra_statement_cache ());
+
+    // localizacoes
+    //
+    {
+      ::std::vector< ::std::basic_string< char > > const& v =
+        obj.localizacoes;
+
+      localizacoes_traits::update (
+        v,
+        esc.localizacoes);
+    }
+
     callback (db, obj, callback_event::post_update);
     pointer_cache_traits::update (db, obj);
   }
@@ -4858,6 +5356,13 @@ namespace odb
       sts.id_image_version (i.version);
       idb.version++;
     }
+
+    extra_statement_cache_type& esc (sts.extra_statement_cache ());
+
+    // localizacoes
+    //
+    localizacoes_traits::erase (
+      esc.localizacoes);
 
     if (sts.erase_statement ().execute () != 1)
       throw object_not_persistent ();
@@ -4967,7 +5472,7 @@ namespace odb
     statements_type::auto_lock l (sts);
 
     const id_type& id  (
-      obj.id);
+      obj.pessoa);
 
     if (!find_ (sts, &id))
       return false;
@@ -5033,6 +5538,27 @@ namespace odb
     }
 
     return r != select_statement::no_data;
+  }
+
+  void access::object_traits_impl< ::denuncia, id_pgsql >::
+  load_ (statements_type& sts,
+         object_type& obj,
+         bool reload)
+  {
+    ODB_POTENTIALLY_UNUSED (reload);
+
+    extra_statement_cache_type& esc (sts.extra_statement_cache ());
+
+    // localizacoes
+    //
+    {
+      ::std::vector< ::std::basic_string< char > >& v =
+        obj.localizacoes;
+
+      localizacoes_traits::load (
+        v,
+        esc.localizacoes);
+    }
   }
 
   result< access::object_traits_impl< ::denuncia, id_pgsql >::object_type >

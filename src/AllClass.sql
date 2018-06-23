@@ -2,7 +2,11 @@
  * compiler for C++.
  */
 
+DROP TABLE IF EXISTS "denuncia_localizacoes" CASCADE;
+
 DROP TABLE IF EXISTS "denuncia" CASCADE;
+
+DROP TABLE IF EXISTS "pessoa_apelidos" CASCADE;
 
 DROP TABLE IF EXISTS "pessoa" CASCADE;
 
@@ -41,20 +45,46 @@ CREATE TABLE "auditoria" (
 
 CREATE TABLE "pessoa" (
   "id" BIGSERIAL NOT NULL PRIMARY KEY,
-  "estado" INTEGER NOT NULL,
   "cpf" TEXT NOT NULL,
   "rg" TEXT NOT NULL,
-  "nome" TEXT NOT NULL,
-  "sobrenome" TEXT NOT NULL,
-  "ultima_modificacao" INTEGER NOT NULL);
+  "nome" TEXT NOT NULL);
+
+CREATE TABLE "pessoa_apelidos" (
+  "object_id" BIGINT NOT NULL,
+  "index" BIGINT NOT NULL,
+  "value" TEXT NOT NULL,
+  CONSTRAINT "object_id_fk"
+    FOREIGN KEY ("object_id")
+    REFERENCES "pessoa" ("id")
+    ON DELETE CASCADE);
+
+CREATE INDEX "pessoa_apelidos_object_id_i"
+  ON "pessoa_apelidos" ("object_id");
+
+CREATE INDEX "pessoa_apelidos_index_i"
+  ON "pessoa_apelidos" ("index");
 
 CREATE TABLE "denuncia" (
-  "id" SERIAL NOT NULL PRIMARY KEY,
-  "latitude" DOUBLE PRECISION NOT NULL,
-  "longitude" DOUBLE PRECISION NOT NULL,
-  "endereco" TEXT NOT NULL,
-  "pessoa" INTEGER NOT NULL,
-  "detalhes" TEXT NOT NULL,
-  "usuario" INTEGER NOT NULL,
-  "data_hora_visto" TEXT NOT NULL);
+  "id" INTEGER NOT NULL,
+  "valido" BOOLEAN NOT NULL,
+  "pessoa" INTEGER NOT NULL PRIMARY KEY,
+  "ultima_localizacao" TEXT NOT NULL,
+  "usuario_cadastro" INTEGER NOT NULL,
+  "usuario_ultima_atualizacao" INTEGER NOT NULL,
+  "data_denuncia" TEXT NOT NULL);
+
+CREATE TABLE "denuncia_localizacoes" (
+  "object_id" INTEGER NOT NULL,
+  "index" BIGINT NOT NULL,
+  "value" TEXT NOT NULL,
+  CONSTRAINT "object_id_fk"
+    FOREIGN KEY ("object_id")
+    REFERENCES "denuncia" ("pessoa")
+    ON DELETE CASCADE);
+
+CREATE INDEX "denuncia_localizacoes_object_id_i"
+  ON "denuncia_localizacoes" ("object_id");
+
+CREATE INDEX "denuncia_localizacoes_index_i"
+  ON "denuncia_localizacoes" ("index");
 

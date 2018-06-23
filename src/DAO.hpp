@@ -41,7 +41,7 @@ public:
 	// shared_ptr<Usuario> getDenunciaUsuario();
 	// string getDenunciaDataHoraVisto();
     //
-    int createDenuncia(shared_ptr<database> db);
+    int createDenuncia(shared_ptr<database> db, int user);
     //
     // /* Pessoa */
     // //SETTERS
@@ -60,7 +60,9 @@ public:
 	// string getPessoaSobrenome();
 	// //shared_ptr<Denuncia> getPessoaUltimoVisto();
 	// shared_ptr<Auditoria> getPessoaUltimaModificacao();
-    //
+
+    std::pair<int,int> createPessoa(shared_ptr<database> db);
+
     // /* Auditoria */
     // //SETTERS
     // void setAuditoriaAcao(string acao);
@@ -152,61 +154,51 @@ DAO& DAO::getInstance(){
 // 	this -> denuncia.setID(id);
 // }
 //
-int DAO::createDenuncia(shared_ptr<database> db){
+int DAO::createDenuncia(shared_ptr<database> db, int user){
     system(CLEAR);
 
-    double latitude;
-    double longitude;
-    string endereco;
-    string pessoa;
-    unsigned int pes;
-    string detalhes;
-    string usuario;
-    unsigned int usu;
-    string data_hora_visto;
+    printf("\t\tFazer denuncia\n\n");
+    std::pair<int,int> ret = DAO::getInstance().createPessoa(db);
+    if(ret.first == -1){
+        return 0;
+    }
 
-    latitude = 30;
-    longitude= 30;
-
-    getchar();
-    cout << "\t\tFormulario de Denuncias: \n\n";
-    cout << "Nome do desaparecido(a): ";
-    getline(cin, pessoa);
-    // lista = dao.getPessoaPeloNome(pessoa);
-
-    cout << "Endereco: ";
-    getline(cin, endereco);
-
-    cout << "Quando ele(a) foi visto(a): ";
-    getline(cin, data_hora_visto);
-
-    cout << "Seu nome: ";
-    getline(cin, usuario);
-
-    cout << "Detalhes: ";
-    getline(cin, detalhes);
-
-    pes = 1;
-    usu = 3;
-
-    denuncia den = denuncia(latitude,
-                   longitude,
-                   endereco,
-                   pes,
-                   detalhes,
-                   usu,
-                   data_hora_visto);
+    printf("Digite a ultima localizacao onde a pessoa desaparecida foi vista:\n");
+    std::string ultima_localizacao;
+    getline(cin, ultima_localizacao);
 
     try {
-        transaction t (db -> begin());
-        unsigned int id = db -> persist(den);
-        t.commit();
-        return 1;
-    } catch(const odb::exception &e){
-		cerr << e.what() << endl;
-        return 0;
-	}
+        if(ret.first == 0){
+            denuncia d;
 
+            transaction t (db -> begin ());
+            db -> load(ret.second, d);
+
+            d.addLocalizacao(ultima_localizacao);
+            d.setUltimaLocalizacao(ultima_localizacao);
+            d.setUsuarioUltimaLocalizacao(user);
+
+            db -> update(d);
+
+            t.commit();
+
+        } else {
+
+            denuncia d = denuncia(ret.second, ultima_localizacao, user, dateNow());
+
+            transaction t (db -> begin ());
+
+            db -> persist(d);
+
+            t.commit();
+
+        }
+
+        return 1;
+    } catch(odb::exception &e){
+        cerr << e.what() << endl;
+        return 0;
+    }
 }
 
 //
@@ -303,7 +295,61 @@ int DAO::createDenuncia(shared_ptr<database> db){
 // shared_ptr<Auditoria> DAO::getPessoaUltimaModificacao(){
 //     return this -> pessoa.getUltimaModificacao();
 // }
-//
+
+std::pair<int, int> DAO::createPessoa(shared_ptr<database> db){
+    printf("\t\tCadastro de pessoa desaparecida\n\n");
+    printf("Digite o RG: ");
+    std::string rg;
+    cin >> rg;
+    printf("Digite o CPF: ");
+    std::string cpf;
+    cin >> cpf;
+    getchar();
+    try {
+        transaction t(db -> begin());
+
+        typedef odb::query<pessoa> query;
+        typedef odb::result<pessoa> result;
+
+        result r(db -> query<pessoa> (query::cpf == cpf));
+
+        if(r.size() == 1){
+            printf("Esta pessoa ja foi registrada como pessoa desaparecida!\n");
+            result::iterator it = r.begin();
+            int id = it -> getID();
+
+            t.commit();
+
+            return {0, id};
+        } else {
+            printf("Digite o nome completo: ");
+            std::string nome;
+            getline(cin, nome);
+            std::vector<std::string> apelidos;
+            std::string apelido;
+            printf("Digite quais os apelidos da pessoa: (digite -1 para sair)\n");
+            getline(cin, apelido);
+            while(apelido != "-1"){
+                apelidos.push_back(apelido);
+                getline(cin, apelido);
+            }
+
+            pessoa p = pessoa(cpf, rg, nome, apelidos);
+
+            unsigned int id_pessoa = db -> persist(p);
+
+            t.commit();
+
+            return {1,id_pessoa};
+        }
+
+    } catch(odb::exception &e){
+        cerr << e.what() << endl;
+        return {-1,-1};
+    }
+
+}
+
 // /********************* AUDITORIA ************************/
 // //SETTERS
 // void DAO::setAuditoriaAcao(string acao){

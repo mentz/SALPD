@@ -263,7 +263,7 @@ namespace odb
 
     typedef unsigned int id_type;
 
-    static const bool auto_id = true;
+    static const bool auto_id = false;
 
     static const bool abstract = false;
 
@@ -1272,18 +1272,6 @@ namespace odb
 
     static const id_type_ id;
 
-    // estado
-    //
-    typedef
-    pgsql::query_column<
-      pgsql::value_traits<
-        int,
-        pgsql::id_integer >::query_type,
-      pgsql::id_integer >
-    estado_type_;
-
-    static const estado_type_ estado;
-
     // cpf
     //
     typedef
@@ -1319,41 +1307,12 @@ namespace odb
     nome_type_;
 
     static const nome_type_ nome;
-
-    // sobrenome
-    //
-    typedef
-    pgsql::query_column<
-      pgsql::value_traits<
-        ::std::string,
-        pgsql::id_string >::query_type,
-      pgsql::id_string >
-    sobrenome_type_;
-
-    static const sobrenome_type_ sobrenome;
-
-    // ultima_modificacao
-    //
-    typedef
-    pgsql::query_column<
-      pgsql::value_traits<
-        unsigned int,
-        pgsql::id_integer >::query_type,
-      pgsql::id_integer >
-    ultima_modificacao_type_;
-
-    static const ultima_modificacao_type_ ultima_modificacao;
   };
 
   template <typename A>
   const typename query_columns< ::pessoa, id_pgsql, A >::id_type_
   query_columns< ::pessoa, id_pgsql, A >::
   id (A::table_name, "\"id\"", 0);
-
-  template <typename A>
-  const typename query_columns< ::pessoa, id_pgsql, A >::estado_type_
-  query_columns< ::pessoa, id_pgsql, A >::
-  estado (A::table_name, "\"estado\"", 0);
 
   template <typename A>
   const typename query_columns< ::pessoa, id_pgsql, A >::cpf_type_
@@ -1369,16 +1328,6 @@ namespace odb
   const typename query_columns< ::pessoa, id_pgsql, A >::nome_type_
   query_columns< ::pessoa, id_pgsql, A >::
   nome (A::table_name, "\"nome\"", 0);
-
-  template <typename A>
-  const typename query_columns< ::pessoa, id_pgsql, A >::sobrenome_type_
-  query_columns< ::pessoa, id_pgsql, A >::
-  sobrenome (A::table_name, "\"sobrenome\"", 0);
-
-  template <typename A>
-  const typename query_columns< ::pessoa, id_pgsql, A >::ultima_modificacao_type_
-  query_columns< ::pessoa, id_pgsql, A >::
-  ultima_modificacao (A::table_name, "\"ultima_modificacao\"", 0);
 
   template <typename A>
   struct pointer_query_columns< ::pessoa, id_pgsql, A >:
@@ -1406,11 +1355,6 @@ namespace odb
       long long id_value;
       bool id_null;
 
-      // estado
-      //
-      int estado_value;
-      bool estado_null;
-
       // cpf
       //
       details::buffer cpf_value;
@@ -1429,21 +1373,101 @@ namespace odb
       std::size_t nome_size;
       bool nome_null;
 
-      // sobrenome
-      //
-      details::buffer sobrenome_value;
-      std::size_t sobrenome_size;
-      bool sobrenome_null;
-
-      // ultima_modificacao
-      //
-      int ultima_modificacao_value;
-      bool ultima_modificacao_null;
-
       std::size_t version;
     };
 
     struct extra_statement_cache_type;
+
+    // apelidos
+    //
+    struct apelidos_traits
+    {
+      static const char select_name[];
+      static const char insert_name[];
+      static const char delete_name[];
+
+      static const unsigned int insert_types[];
+
+      static const std::size_t id_column_count = 1UL;
+      static const std::size_t data_column_count = 3UL;
+
+      static const bool versioned = false;
+
+      static const char insert_statement[];
+      static const char select_statement[];
+      static const char delete_statement[];
+
+      typedef ::std::vector< ::std::basic_string< char > > container_type;
+      typedef
+      odb::access::container_traits<container_type>
+      container_traits_type;
+      typedef container_traits_type::index_type index_type;
+      typedef container_traits_type::value_type value_type;
+
+      typedef ordered_functions<index_type, value_type> functions_type;
+      typedef pgsql::container_statements< apelidos_traits > statements_type;
+
+      struct data_image_type
+      {
+        // index
+        //
+        long long index_value;
+        bool index_null;
+
+        // value
+        //
+        details::buffer value_value;
+        std::size_t value_size;
+        bool value_null;
+
+        std::size_t version;
+      };
+
+      static void
+      bind (pgsql::bind*,
+            const pgsql::bind* id,
+            std::size_t id_size,
+            data_image_type&);
+
+      static void
+      grow (data_image_type&,
+            bool*);
+
+      static void
+      init (data_image_type&,
+            index_type*,
+            const value_type&);
+
+      static void
+      init (index_type&,
+            value_type&,
+            const data_image_type&,
+            database*);
+
+      static void
+      insert (index_type, const value_type&, void*);
+
+      static bool
+      select (index_type&, value_type&, void*);
+
+      static void
+      delete_ (void*);
+
+      static void
+      persist (const container_type&,
+               statements_type&);
+
+      static void
+      load (container_type&,
+            statements_type&);
+
+      static void
+      update (const container_type&,
+              statements_type&);
+
+      static void
+      erase (statements_type&);
+    };
 
     using object_traits<object_type>::id;
 
@@ -1482,7 +1506,7 @@ namespace odb
 
     typedef pgsql::query_base query_base_type;
 
-    static const std::size_t column_count = 7UL;
+    static const std::size_t column_count = 4UL;
     static const std::size_t id_column_count = 1UL;
     static const std::size_t inverse_column_count = 0UL;
     static const std::size_t readonly_column_count = 0UL;
@@ -1574,41 +1598,17 @@ namespace odb
 
     static const id_type_ id;
 
-    // latitude
+    // valido
     //
     typedef
     pgsql::query_column<
       pgsql::value_traits<
-        double,
-        pgsql::id_double >::query_type,
-      pgsql::id_double >
-    latitude_type_;
+        bool,
+        pgsql::id_boolean >::query_type,
+      pgsql::id_boolean >
+    valido_type_;
 
-    static const latitude_type_ latitude;
-
-    // longitude
-    //
-    typedef
-    pgsql::query_column<
-      pgsql::value_traits<
-        double,
-        pgsql::id_double >::query_type,
-      pgsql::id_double >
-    longitude_type_;
-
-    static const longitude_type_ longitude;
-
-    // endereco
-    //
-    typedef
-    pgsql::query_column<
-      pgsql::value_traits<
-        ::std::string,
-        pgsql::id_string >::query_type,
-      pgsql::id_string >
-    endereco_type_;
-
-    static const endereco_type_ endereco;
+    static const valido_type_ valido;
 
     // pessoa
     //
@@ -1622,7 +1622,7 @@ namespace odb
 
     static const pessoa_type_ pessoa;
 
-    // detalhes
+    // ultima_localizacao
     //
     typedef
     pgsql::query_column<
@@ -1630,11 +1630,11 @@ namespace odb
         ::std::string,
         pgsql::id_string >::query_type,
       pgsql::id_string >
-    detalhes_type_;
+    ultima_localizacao_type_;
 
-    static const detalhes_type_ detalhes;
+    static const ultima_localizacao_type_ ultima_localizacao;
 
-    // usuario
+    // usuario_cadastro
     //
     typedef
     pgsql::query_column<
@@ -1642,11 +1642,23 @@ namespace odb
         unsigned int,
         pgsql::id_integer >::query_type,
       pgsql::id_integer >
-    usuario_type_;
+    usuario_cadastro_type_;
 
-    static const usuario_type_ usuario;
+    static const usuario_cadastro_type_ usuario_cadastro;
 
-    // data_hora_visto
+    // usuario_ultima_atualizacao
+    //
+    typedef
+    pgsql::query_column<
+      pgsql::value_traits<
+        unsigned int,
+        pgsql::id_integer >::query_type,
+      pgsql::id_integer >
+    usuario_ultima_atualizacao_type_;
+
+    static const usuario_ultima_atualizacao_type_ usuario_ultima_atualizacao;
+
+    // data_denuncia
     //
     typedef
     pgsql::query_column<
@@ -1654,9 +1666,9 @@ namespace odb
         ::std::string,
         pgsql::id_string >::query_type,
       pgsql::id_string >
-    data_hora_visto_type_;
+    data_denuncia_type_;
 
-    static const data_hora_visto_type_ data_hora_visto;
+    static const data_denuncia_type_ data_denuncia;
   };
 
   template <typename A>
@@ -1665,19 +1677,9 @@ namespace odb
   id (A::table_name, "\"id\"", 0);
 
   template <typename A>
-  const typename query_columns< ::denuncia, id_pgsql, A >::latitude_type_
+  const typename query_columns< ::denuncia, id_pgsql, A >::valido_type_
   query_columns< ::denuncia, id_pgsql, A >::
-  latitude (A::table_name, "\"latitude\"", 0);
-
-  template <typename A>
-  const typename query_columns< ::denuncia, id_pgsql, A >::longitude_type_
-  query_columns< ::denuncia, id_pgsql, A >::
-  longitude (A::table_name, "\"longitude\"", 0);
-
-  template <typename A>
-  const typename query_columns< ::denuncia, id_pgsql, A >::endereco_type_
-  query_columns< ::denuncia, id_pgsql, A >::
-  endereco (A::table_name, "\"endereco\"", 0);
+  valido (A::table_name, "\"valido\"", 0);
 
   template <typename A>
   const typename query_columns< ::denuncia, id_pgsql, A >::pessoa_type_
@@ -1685,19 +1687,24 @@ namespace odb
   pessoa (A::table_name, "\"pessoa\"", 0);
 
   template <typename A>
-  const typename query_columns< ::denuncia, id_pgsql, A >::detalhes_type_
+  const typename query_columns< ::denuncia, id_pgsql, A >::ultima_localizacao_type_
   query_columns< ::denuncia, id_pgsql, A >::
-  detalhes (A::table_name, "\"detalhes\"", 0);
+  ultima_localizacao (A::table_name, "\"ultima_localizacao\"", 0);
 
   template <typename A>
-  const typename query_columns< ::denuncia, id_pgsql, A >::usuario_type_
+  const typename query_columns< ::denuncia, id_pgsql, A >::usuario_cadastro_type_
   query_columns< ::denuncia, id_pgsql, A >::
-  usuario (A::table_name, "\"usuario\"", 0);
+  usuario_cadastro (A::table_name, "\"usuario_cadastro\"", 0);
 
   template <typename A>
-  const typename query_columns< ::denuncia, id_pgsql, A >::data_hora_visto_type_
+  const typename query_columns< ::denuncia, id_pgsql, A >::usuario_ultima_atualizacao_type_
   query_columns< ::denuncia, id_pgsql, A >::
-  data_hora_visto (A::table_name, "\"data_hora_visto\"", 0);
+  usuario_ultima_atualizacao (A::table_name, "\"usuario_ultima_atualizacao\"", 0);
+
+  template <typename A>
+  const typename query_columns< ::denuncia, id_pgsql, A >::data_denuncia_type_
+  query_columns< ::denuncia, id_pgsql, A >::
+  data_denuncia (A::table_name, "\"data_denuncia\"", 0);
 
   template <typename A>
   struct pointer_query_columns< ::denuncia, id_pgsql, A >:
@@ -1725,53 +1732,135 @@ namespace odb
       int id_value;
       bool id_null;
 
-      // latitude
+      // valido
       //
-      double latitude_value;
-      bool latitude_null;
-
-      // longitude
-      //
-      double longitude_value;
-      bool longitude_null;
-
-      // endereco
-      //
-      details::buffer endereco_value;
-      std::size_t endereco_size;
-      bool endereco_null;
+      bool valido_value;
+      bool valido_null;
 
       // pessoa
       //
       int pessoa_value;
       bool pessoa_null;
 
-      // detalhes
+      // ultima_localizacao
       //
-      details::buffer detalhes_value;
-      std::size_t detalhes_size;
-      bool detalhes_null;
+      details::buffer ultima_localizacao_value;
+      std::size_t ultima_localizacao_size;
+      bool ultima_localizacao_null;
 
-      // usuario
+      // usuario_cadastro
       //
-      int usuario_value;
-      bool usuario_null;
+      int usuario_cadastro_value;
+      bool usuario_cadastro_null;
 
-      // data_hora_visto
+      // usuario_ultima_atualizacao
       //
-      details::buffer data_hora_visto_value;
-      std::size_t data_hora_visto_size;
-      bool data_hora_visto_null;
+      int usuario_ultima_atualizacao_value;
+      bool usuario_ultima_atualizacao_null;
+
+      // data_denuncia
+      //
+      details::buffer data_denuncia_value;
+      std::size_t data_denuncia_size;
+      bool data_denuncia_null;
 
       std::size_t version;
     };
 
     struct extra_statement_cache_type;
 
-    using object_traits<object_type>::id;
+    // localizacoes
+    //
+    struct localizacoes_traits
+    {
+      static const char select_name[];
+      static const char insert_name[];
+      static const char delete_name[];
 
-    static id_type
-    id (const id_image_type&);
+      static const unsigned int insert_types[];
+
+      static const std::size_t id_column_count = 1UL;
+      static const std::size_t data_column_count = 3UL;
+
+      static const bool versioned = false;
+
+      static const char insert_statement[];
+      static const char select_statement[];
+      static const char delete_statement[];
+
+      typedef ::std::vector< ::std::basic_string< char > > container_type;
+      typedef
+      odb::access::container_traits<container_type>
+      container_traits_type;
+      typedef container_traits_type::index_type index_type;
+      typedef container_traits_type::value_type value_type;
+
+      typedef ordered_functions<index_type, value_type> functions_type;
+      typedef pgsql::container_statements< localizacoes_traits > statements_type;
+
+      struct data_image_type
+      {
+        // index
+        //
+        long long index_value;
+        bool index_null;
+
+        // value
+        //
+        details::buffer value_value;
+        std::size_t value_size;
+        bool value_null;
+
+        std::size_t version;
+      };
+
+      static void
+      bind (pgsql::bind*,
+            const pgsql::bind* id,
+            std::size_t id_size,
+            data_image_type&);
+
+      static void
+      grow (data_image_type&,
+            bool*);
+
+      static void
+      init (data_image_type&,
+            index_type*,
+            const value_type&);
+
+      static void
+      init (index_type&,
+            value_type&,
+            const data_image_type&,
+            database*);
+
+      static void
+      insert (index_type, const value_type&, void*);
+
+      static bool
+      select (index_type&, value_type&, void*);
+
+      static void
+      delete_ (void*);
+
+      static void
+      persist (const container_type&,
+               statements_type&);
+
+      static void
+      load (container_type&,
+            statements_type&);
+
+      static void
+      update (const container_type&,
+              statements_type&);
+
+      static void
+      erase (statements_type&);
+    };
+
+    using object_traits<object_type>::id;
 
     static id_type
     id (const image_type&);
@@ -1805,7 +1894,7 @@ namespace odb
 
     typedef pgsql::query_base query_base_type;
 
-    static const std::size_t column_count = 8UL;
+    static const std::size_t column_count = 7UL;
     static const std::size_t id_column_count = 1UL;
     static const std::size_t inverse_column_count = 0UL;
     static const std::size_t readonly_column_count = 0UL;
@@ -1826,7 +1915,7 @@ namespace odb
     static const char table_name[];
 
     static void
-    persist (database&, object_type&);
+    persist (database&, const object_type&);
 
     static pointer_type
     find (database&, const id_type&);

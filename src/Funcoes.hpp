@@ -6,6 +6,8 @@
 #include "AllClass-odb.hxx"
 #include "DAO.hpp"
 
+int user = -1;
+
 void menuAdmin(shared_ptr<database> db){
 	int sair = 0;
 	char ch;
@@ -40,8 +42,8 @@ void menuAdmin(shared_ptr<database> db){
 	}
 }
 
-int menuAnonimo(shared_ptr<database> db){
-	int op, r = -1, ret;
+void menuAnonimo(shared_ptr<database> db){
+	int op, ret;
 	char ch;
 	system(CLEAR);
 	// clearConsole();
@@ -54,35 +56,34 @@ int menuAnonimo(shared_ptr<database> db){
 	cin >> op;
 	switch (op) {
 		case 1:
-			r = DAO::getInstance().verificaLogin(db);
-			if(r > 0){
+			user = DAO::getInstance().verificaLogin(db);
+			if(user > 0){
 				cout << "Login efetuado com sucesso!" << endl;
 			}
 			cin >> ch;
 			break;
 		case 2:
-			ret = DAO::getInstance().createDenuncia(db);
+			ret = DAO::getInstance().createDenuncia(db, user);
 			if(ret){
 				cout << "Denuncia feita com sucesso!" << endl;
 			}
 			cin >> ch;
 			break;
 		case 3:
-			r = -2;
+			user = -2;
 			break;
 		default:
 			printf("Digite uma opcao valida!!\n");
 			cin >> ch;
 			break;
 	}
-	return r;
 }
 //
 //
 
 void menu(shared_ptr<database> db){
 
-	int sair = 0, user = -1, r;
+	int sair = 0, r;
 	bool logado = false;
 	char ch;
 	while (!sair and user >= -1){
@@ -91,17 +92,8 @@ void menu(shared_ptr<database> db){
 				menuAdmin(db);
 				user = -1;
 				break;
-			case GESTOR:
-				user = -1;
-				break;
-			case AGENTE:
-				user = -1;
-				break;
-			case INFORMANTE:
-				user = -1;
-				break;
 			default: //ANONIMO
-				user = menuAnonimo(db);
+				menuAnonimo(db);
 				break;
 		}
 	}
