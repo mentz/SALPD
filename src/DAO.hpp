@@ -154,6 +154,11 @@ DAO& DAO::getInstance(){
 // 	this -> denuncia.setID(id);
 // }
 //
+
+/*
+	Criar denúncia: inserir informações sobre localização recente
+	de uma pessoa já cadastrada como perdida.
+*/
 int DAO::createDenuncia(shared_ptr<database> db, int user){
     system(CLEAR);
 
@@ -181,9 +186,7 @@ int DAO::createDenuncia(shared_ptr<database> db, int user){
             db -> update(d);
 
             t.commit();
-
         } else {
-
             denuncia d = denuncia(ret.second, ultima_localizacao, user, dateNow());
 
             transaction t (db -> begin ());
@@ -198,7 +201,7 @@ int DAO::createDenuncia(shared_ptr<database> db, int user){
     } catch(odb::exception &e){
         cerr << e.what() << endl;
         return 0;
-    }
+	}
 }
 
 //

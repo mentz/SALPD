@@ -19,7 +19,7 @@ void menuAdmin(shared_ptr<database> db){
 		system(CLEAR);
 		// clearConsole();
 		// Apresentar opções
-		printf("\t\tMenu do Admin\n\n");
+		printf("        Menu do Admin\n\n");
 		printf("1 -> Criar Usuarios\n");
 		printf("2 -> Sair\n");
 		cout << "> ";
@@ -48,9 +48,9 @@ void menuAnonimo(shared_ptr<database> db){
 	system(CLEAR);
 	// clearConsole();
 	// Apresentar opções
-	printf("\t\tSALPD\n\n");
+	printf("        SALPD\n\n");
 	printf("1 -> Login\n");
-	printf("2 -> Fazer denuncia anonima\n");
+	printf("2 -> Fazer denuncia anônima\n");
 	printf("3 -> Sair\n");
 	cout << "> ";
 	cin >> op;
@@ -60,21 +60,23 @@ void menuAnonimo(shared_ptr<database> db){
 			if(user > 0){
 				cout << "Login efetuado com sucesso!" << endl;
 			}
-			cin >> ch;
+			getchar();
 			break;
 		case 2:
 			ret = DAO::getInstance().createDenuncia(db, user);
+			/*
 			if(ret){
 				cout << "Denuncia feita com sucesso!" << endl;
 			}
-			cin >> ch;
+			*/
+			getchar();
 			break;
 		case 3:
 			user = -2;
 			break;
 		default:
 			printf("Digite uma opcao valida!!\n");
-			cin >> ch;
+			getchar();
 			break;
 	}
 }

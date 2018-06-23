@@ -22,7 +22,7 @@ connectApp:
 clean:
 	-rm *-odb*
 	-rm *.o
-	-rm *.sql
+	-rm AllClass.sql
 	-rm ./-.s
 
 .PHONY: default clean build buildSQL

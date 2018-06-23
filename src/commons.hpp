@@ -19,11 +19,11 @@
 
 #include <odb/pgsql/database.hxx>
 
-#define ADMIN 1
-#define GESTOR 2
-#define AGENTE 3
-#define INFORMANTE 4
-#define ANONIMO 5
+#define ADMIN 0
+#define GESTOR 1
+#define AGENTE 2
+#define INFORMANTE 3
+#define ANONIMO 4
 
 using namespace odb::core;
 using namespace std;
