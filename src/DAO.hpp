@@ -12,7 +12,7 @@ public:
 
     int createDenuncia(shared_ptr<database> db, usuario user);
 
-    pessoa createPessoa(shared_ptr<database> db);
+    int createPessoa(shared_ptr<database> db);
 
     int criaUsuario(shared_ptr<database> db);
 
@@ -34,17 +34,52 @@ int DAO::createDenuncia(shared_ptr<database> db, usuario user){
     system(CLEAR);
 
     printf("\t\tFazer denuncia\n\n");
-    pessoa pessoa_desaparecida = DAO::getInstance().createPessoa(db);
+    pessoa pessoa_desaparecida;
 
     std::string nome_desaparecido;
     printf("Digite o nome da pessoa desaparecida:\n");
     getline(cin, nome_desaparecido);
 
+    try {
+        transaction t(db -> begin());
+
+        typedef odb::query<pessoa> query;
+        typedef odb::result<pessoa> result;
+
+        std::string buscaLike = "%%" + nome_desaparecido + "%%";
+
+        result r(db -> query<pessoa>(query::nome.like(buscaLike) and query::estado == false));
+
+        if(r.size() > 0){
+            printf("Encontramos algum(ns) resultado(s) com esse nome:\n");
+            int idx = 1;
+            std::vector<pessoa> pessoas_sistema;
+            for(pessoa &p : r){
+                printf("%d -> Nome: %s | RG: %8s | CPF: %s\n", idx++, p.getNome().c_str(), p.getRG().c_str(), p.getCPF().c_str());
+                pessoas_sistema.push_back(p);
+            }
+            printf("Digite o numero da pessoa:\n> ");
+            int indice;
+            scanf("%d", &indice);
+            if(indice == -1){
+                return 0;
+            }
+            pessoa_desaparecida = pessoas_sistema[indice - 1];
+        } else {
+            printf("Nenhuma pessoa cadastrada com esse nome!\n");
+            return 0;
+        }
+        t.commit();
+    } catch(odb::exception &e){
+        cerr << e.what() << endl;
+        return 0;
+    }
+
     printf("Digite a latitude e longitude da ultima localizacao da pessoa desaparecida:\n");
     std::string latitude, longitude;
-    printf("Digite a latitude: ");
+    printf("\tDigite a latitude: ");
     cin >> latitude;
-    printf("Digite a longitude: ");
+    printf("\tDigite a longitude: ");
     cin >> longitude;
 
     printf("Agora descreva alguns detalhes sobre a denuncia:\n");
@@ -69,14 +104,16 @@ int DAO::createDenuncia(shared_ptr<database> db, usuario user){
 	}
 }
 
-pessoa DAO::createPessoa(shared_ptr<database> db){
+int DAO::createPessoa(shared_ptr<database> db){
+    system(CLEAR);
+
     printf("\tCadastro de pessoa desaparecida\n\n");
 
-    printf("Digite o nome da pessoa desaparecida\n");
+    printf("Digite o nome da pessoa desaparecida:\n> ");
     std::string nome;
     getline(cin, nome);
 
-    pessoa ret;
+    int ret;
 
     try {
         transaction t(db -> begin());
@@ -84,37 +121,68 @@ pessoa DAO::createPessoa(shared_ptr<database> db){
         typedef odb::query<pessoa> query;
         typedef odb::result<pessoa> result;
 
-        std::string selectLIKE = "SELECT * FROM pessoa WHERE nome LIKE " + nome;
+        std::string buscaLike = "%%" + nome + "%%";
 
-        result r(db -> query<pessoa>(query::nome.like(nome)));
+        result r(db -> query<pessoa>(query::nome.like(buscaLike) and query::estado == false));
 
-        if(r.size()){
+        if(r.size()){ //Tem pessoas com o mesmo ou com um nome proximo no banco de dados
             printf("Encontramos algum(ns) resultado(s) com esse nome:\n");
             int idx = 1;
             std::vector<pessoa> pessoas_sistema;
             for(result::iterator it = r.begin(); it != r.end(); it++){
-                printf("%d -> Nome: %s | RG %s | CPF: %s\n", idx++, it -> getNome(), it -> getRG(), it -> getCPF());
+                printf("%d -> Nome: %s | RG %8s | CPF: %s\n", idx++, it -> getNome().c_str(), it -> getRG().c_str(), it -> getCPF().c_str());
                 pessoas_sistema.push_back(*it);
             }
-            printf("Algum desses eh sua pessoa desaparecida? (S\N)\n");
+            printf("Algum desses eh sua pessoa desaparecida? (S/N)\n");
             printf("> ");
             char c;
             scanf("%c", &c);
+            getchar();
             if(c == 'S' or c == 's'){
-                printf("Digite o numero da pessoa: ");
-                int indice;
-                scanf("%d", &indice);
-                pessoa ret = pessoas_sistema[indice - 1];
+                printf("Pessoa desaparecida ja cadastrada no sistema!\n");
+                ret = 0;
             } else {
-                printf("Ok\n");
+                std::string rg, cpf, detalhes;
+                int idade;
+                printf("Digite o RG da pessoa desaparecida: ");
+                getline(cin, rg);
+                printf("Digite o CPF da pessoa desaparecida: ");
+                getline(cin, cpf);
+                printf("Digite a idade da pessoa desaparecida: ");
+                cin >> idade;
+                getchar();
+                printf("Descreva a pessoa desaparecida:\n> ");
+                getline(cin, detalhes);
+
+                pessoa nova_pessoa_cadastrada(nome, detalhes, getTime(), rg, cpf, idade);
+
+                db -> persist(nova_pessoa_cadastrada);
+                ret = 1;
             }
+        } else { //Nao tem nenhum nome parecido no banco de dados
+            std::string rg, cpf, detalhes;
+            int idade;
+            printf("Digite o RG da pessoa desaparecida: ");
+            getline(cin, rg);
+            printf("Digite o CPF da pessoa desaparecida: ");
+            getline(cin, cpf);
+            printf("Digite a idade da pessoa desaparecida: ");
+            cin >> idade;
+            getchar();
+            printf("Descreva a pessoa desaparecida:\n> ");
+            getline(cin, detalhes);
+
+            pessoa nova_pessoa_cadastrada(nome, detalhes, getTime(), rg, cpf, idade);
+
+            db -> persist(nova_pessoa_cadastrada);
+            ret = 1;
         }
         t.commit();
 
         return ret;
     } catch(odb::exception &e){
         cerr << e.what() << endl;
-        return pessoa();
+        return 0;
     }
 
 }
@@ -174,7 +242,6 @@ usuario DAO::verificaLogin(shared_ptr<database> db){
 
     cout << "Digite sua senha: ";
     cin >> hash_senha;
-
     typedef odb::query<usuario> query;
     typedef odb::result<usuario> result;
 
@@ -187,6 +254,7 @@ usuario DAO::verificaLogin(shared_ptr<database> db){
         if(r.size() == 0){
             cout << "ID e/ou senha incorretos!" << endl;
             ret = getAnonimo();
+            getchar();
         } else {
             ret = *(r.begin());
         }

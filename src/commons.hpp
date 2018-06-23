@@ -35,7 +35,9 @@ time_t getTime(){
 }
 
 usuario getAnonimo(){
-	return usuario("", "", "", "", "", getTime(), new papel(ANONIMO, ""));
+	usuario anonimo("", "", "", "", "", getTime(), new papel(ANONIMO, ""));
+	anonimo.setID(1);
+	return anonimo;
 }
 
 #ifdef _WIN32

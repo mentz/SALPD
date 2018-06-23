@@ -29,8 +29,11 @@ public:
 		this -> permissoes = permissoes;
 	}
     void setPermissoes(std::string);
-    int getPapel() const {
+	int getID(){
 		return this -> id;
+	}
+    std::string getPapel() const {
+		return (this -> id == 1 ? "ADMIN" : (this -> id == 2 ? "GESTOR" : (this -> id == 3 ? "AGENTE" : (this -> id == 4 ? "INFORMANTE" : "ANONIMO"))));
 	}
     std::string getPermissoes() const;
 };
@@ -94,6 +97,10 @@ public:
 	time_t getDataCadastro(){
 		return this -> data_cadastro;
 	}
+
+	void setID(int id){
+		this -> id = id;
+	}
 };
 
 
@@ -112,7 +119,7 @@ private:
 	#pragma db not_null
 	time_t data_hora;
 public:
-    auditoria() {};
+    auditoria() {}
 	auditoria(std::string acao, usuario * usuario_acao, time_t data_hora){
 		this -> acao = acao;
 		this -> usuario_acao = usuario_acao;
@@ -163,6 +170,7 @@ public:
 		this -> data_cadastro = data_cadastro;
 		this -> ultimo_update = data_cadastro;
 		this -> estado = false;
+		this -> idade = idade;
 	}
 
 	void changeEstado(bool estado){
@@ -238,8 +246,5 @@ public:
 
 };
 
-
-//
-// #pragma db value(Denuncia) definition
 
 #endif
