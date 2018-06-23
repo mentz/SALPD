@@ -10,7 +10,7 @@
 #include "DAO.hpp"
 
 // Usuario admin;
-
+extern int user;
 
 int main(int argc, char **argv){
 	shared_ptr<database> db;

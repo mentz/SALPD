@@ -2,7 +2,10 @@
 #define __ALL_CLASS_HXX__
 
 #include <odb/core.hxx>
+#include <sstream>
+#include <string>
 #include <memory>
+#include <vector>
 #include <iostream>
 #include <cstdlib>
 #include <cstdio>
@@ -67,12 +70,24 @@ public:
 	int getID(){
 		return this -> id;
 	}
-	std::string getRG();
-	std::string getCPF();
-	std::string getNome();
-	std::string getSobrenome();
-	std::string getHashSenha();
-	std::string getDataCadastro();
+	std::string getRG(){
+		return this -> rg;
+	}
+	std::string getCPF(){
+		return this -> cpf;
+	}
+	std::string getNome(){
+		return this -> nome;
+	}
+	std::string getSobrenome(){
+		return this -> sobrenome;
+	}
+	std::string getHashSenha(){
+		return this -> hash_senha;
+	}
+	std::string getDataCadastro(){
+		return this -> data_cadastro;
+	}
 	std::string getUltimoAcesso();
 };
 
@@ -87,11 +102,8 @@ private:
     #pragma db id auto
     unsigned long id;
 
-    // #pragma db type(definition)
 	unsigned int usuario;
-    // #pragma db type(definition)
 	unsigned int papel;
-	// shared_ptr<Auditoria> auditoria;
 	bool valido;
 public:
     usuariopapel() {};
@@ -154,33 +166,44 @@ private:
 
     friend class odb::access;
 
-	int estado;	// 0 para perdido, 1 para encontrado
+	// int estado;	// 0 para perdido, 1 para encontrado
 	std::string cpf;
 	std::string rg;
 	std::string nome;
-	std::string sobrenome;
+	std::vector<std::string> apelidos;
 	//shared_ptr<Denuncia> ultimo_visto;
-	unsigned int ultima_modificacao;
+	// unsigned int ultima_modificacao;
 public:
 
 	pessoa() {};
-	pessoa(int id, std::string cpf, std::string rg, std::string nome, std::string sobrenome, unsigned int ultima_modificacao);
+	pessoa(std::string cpf, std::string rg, std::string nome, std::vector<std::string> apelidos){
+		this -> cpf = cpf;
+		this -> rg = rg;
+		this -> nome = nome;
+		this -> apelidos = apelidos;
+	}
 
 	void setID(int id);
 	void setCPF(std::string cpf);
 	void setRG(std::string rg);
 	void setNome(std::string nome);
-	void setSobrenome(std::string sobrenome);
 	//void setUltimoVisto(shared_ptr<Denuncia> ultimo_visto);
-	void setUltimaModificacao(unsigned int ultima_modificacao);
+	// void setUltimaModificacao(unsigned int ultima_modificacao);
 
-	int getID();
-	std::string getCPF();
-	std::string getRG();
-	std::string getNome();
-	std::string getSobrenome();
+	int getID(){
+		return this -> id;
+	}
+	std::string getCPF(){
+		return this -> cpf;
+	}
+	std::string getRG(){
+		return this -> rg;
+	}
+	std::string getNome(){
+		return this -> nome;
+	}
 	//shared_ptr<Denuncia> getUltimoVisto();
-	unsigned int getUltimaModificacao();
+	// unsigned int getUltimaModificacao();
 };
 //
 // #pragma db value(Pessoa) definition
@@ -190,50 +213,65 @@ class denuncia {
 private:
     friend class odb::access;
 
-	#pragma db id auto
 	unsigned int id;
 
-	double latitude;
-	double longitude;
-	std::string endereco;
-	unsigned int pessoa;  // Pessoa desaparecida
-	std::string detalhes;
-	unsigned int usuario;	// Inserido por
-	std::string data_hora_visto;
+	bool valido;
+
+	#pragma db id
+	unsigned int pessoa;
+
+	std::vector<std::string> localizacoes;
+	std::string ultima_localizacao;
+	unsigned int usuario_cadastro;
+	unsigned int usuario_ultima_atualizacao;
+	std::string data_denuncia;
 public:
 	denuncia(){};
-	denuncia(double latitude, double longitude, std::string endereco,
-			 unsigned int pessoa, std::string detalhes, unsigned int usuario,
-			 std::string data_hora_visto){
-                 this -> latitude = latitude;
-                 this -> longitude = longitude;
-                 this -> endereco = endereco;
-                 this -> pessoa = pessoa;
-                 this -> detalhes = detalhes;
-                 this -> usuario = usuario;
-                 this -> data_hora_visto = data_hora_visto;
+	denuncia(unsigned int pessoa, std::string ultima_localizacao, unsigned int usuario_cadastro, std::string data_denuncia){
+		this -> pessoa = pessoa;
+		this -> ultima_localizacao = ultima_localizacao;
+		this -> localizacoes.push_back(ultima_localizacao);
+		this -> usuario_cadastro = usuario_cadastro;
+		this -> usuario_ultima_atualizacao = usuario_cadastro;
+		this -> data_denuncia = data_denuncia;
+		this -> valido = false;
+	}
 
-             }
+	//SETTERS
+	void setUltimaLocalizacao(std::string ultima_localizacao){
+		this -> ultima_localizacao = ultima_localizacao;
+	}
 
-	void setID(int id);
-	void setLatitude(double latitude);
-	void setLongitude(double longitude);
-	void setEndereco(std::string endereco);
-	void setPessoa(unsigned int pessoa);
-	void setDetalhes(std::string detalhes);
-	void setUsuario(unsigned int usuario);
-	void setDataHoraVisto(std::string data_hora_visto);
+	void setUsuarioUltimaLocalizacao(unsigned int user){
+		this -> usuario_ultima_atualizacao = user;
+	}
 
-	int getID();
-	double getLatitude();
-	double getLongitude();
-	std::string getEndereco();
-	unsigned int getPessoa();
-	std::string getDetalhes();
-	unsigned int getUsuario();
-	std::string getDataHoraVisto();
+	//GETTERS
+	bool getValido(){
+		return this -> valido;
+	}
+	unsigned int getPessoa(){
+		return this -> pessoa;
+	}
+	std::string getUltimaLocalizacao(){
+		return this -> ultima_localizacao;
+	}
+	unsigned int getUsuarioCadastro(){
+		return this -> usuario_cadastro;
+	}
+	unsigned int getUsuarioUltimaAtualizacao(){
+		return this -> usuario_ultima_atualizacao;
+	}
+	std::string getDataDenuncia(){
+		return this -> data_denuncia;
+	}
 
+	//GERAL
+	void addLocalizacao(std::string localizacao){
+		this -> localizacoes.push_back(localizacao);
+	}
 };
+
 //
 // #pragma db value(Denuncia) definition
 
