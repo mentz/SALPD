@@ -10,11 +10,13 @@ private:
 public:
     static DAO& getInstance();
 
-    int createDenuncia(shared_ptr<database> db, usuario user);
+    int createDenuncia(shared_ptr<database> db, usuario user, bool estado);
 
-    int createPessoa(shared_ptr<database> db);
+    int createPessoa(shared_ptr<database> db, bool estado);
 
     int criaUsuario(shared_ptr<database> db);
+	
+	void checkDenuncias(shared_ptr<database> db);
 
     /* Trecos aleatorios */
     usuario verificaLogin(shared_ptr<database> db);
@@ -30,7 +32,7 @@ DAO& DAO::getInstance(){
     return instance;
 }
 
-int DAO::createDenuncia(shared_ptr<database> db, usuario user){
+int DAO::createDenuncia(shared_ptr<database> db, usuario user, bool estado = false){
     system(CLEAR);
 
     printf("\t\tFazer denuncia\n\n");
@@ -91,7 +93,7 @@ int DAO::createDenuncia(shared_ptr<database> db, usuario user){
 
         transaction t(db -> begin());
 
-        denuncia d = denuncia(&pessoa_desaparecida, latitude, longitude, &user, detalhes, getTime(), "-1", "-1");
+        denuncia d = denuncia(&pessoa_desaparecida, latitude, longitude, &user, detalhes, getTime(), "-1", "-1", estado);
 
         db -> persist(d);
 
@@ -104,7 +106,7 @@ int DAO::createDenuncia(shared_ptr<database> db, usuario user){
 	}
 }
 
-int DAO::createPessoa(shared_ptr<database> db){
+int DAO::createPessoa(shared_ptr<database> db, bool estado = false){
     system(CLEAR);
 
     printf("\tCadastro de pessoa desaparecida\n\n");
@@ -154,9 +156,9 @@ int DAO::createPessoa(shared_ptr<database> db){
                 printf("Descreva a pessoa desaparecida:\n> ");
                 getline(cin, detalhes);
 
-                pessoa nova_pessoa_cadastrada(nome, detalhes, getTime(), rg, cpf, idade);
+                pessoa nova_pessoa_cadastrada(nome, detalhes, getTime(), rg, cpf, idade, estado);
 
-                db -> persist(nova_pessoa_cadastrada);
+               	db -> persist(nova_pessoa_cadastrada);
                 ret = 1;
             }
         } else { //Nao tem nenhum nome parecido no banco de dados
@@ -196,10 +198,10 @@ int DAO::criaUsuario(shared_ptr<database> db){
 
     cout << "Digite o RG: ";
     cin >> rg;
+	getchar();
 
     cout << "Digite o CPF: ";
     cin >> cpf;
-
     getchar();
 
     cout << "Digite o nome: ";
@@ -207,14 +209,22 @@ int DAO::criaUsuario(shared_ptr<database> db){
 
     cout << "Digite o nome de usuario: ";
     cin >> nome_usuario;
+	getchar();
 
     cout << "Digite a senha do novo usuario: ";
     cin >> hash_senha;
+	getchar();
 
     cout << "Qual sera o papel do usuario? (ADMIN, GESTOR, AGENTE, INFORMANTE)\n> ";
     cin >> role;
+	getchar();
 
-    int p = (role == "ADMIN" ? ADMIN : (role == "GESTOR" ? GESTOR : (role == "AGENTE" ? AGENTE : INFORMANTE)));
+    int p = (role == "ADMIN" ? ADMIN : (role == "GESTOR" ? GESTOR : (role == "AGENTE" ? AGENTE : (role == "INFORMANTE" ? INFORMANTE : -1))));
+	
+	if(p == 1){
+		cout << "Digite um papel valido!" << endl;
+		return 0;
+	}
 
     try {
         usuario usu(rg, cpf, nome, nome_usuario, hash_senha, getTime(), new papel(p, ""));
@@ -230,6 +240,69 @@ int DAO::criaUsuario(shared_ptr<database> db){
         cerr << e.what() << endl;
         return 0;
     }
+}
+
+void DAO::checkDenuncias(shared_ptr<database> db){
+	typedef odb::query<denuncia> query;
+	typedef odb::query<pessoa> queryP;
+	typedef odb::result<denuncia> result;
+	typedef odb::result<pessoa> resultP;
+
+	try {
+	
+		transaction t(db -> begin());
+
+		result r(db -> query<denuncia> (query::estado == false));
+		
+		if(r.size() > 0){
+			int op;
+		
+			for(denuncia &d : r){
+				system(CLEAR);
+				cout << "\t\tValidador de denuncias" << endl << endl;
+				resultP p(db -> query<pessoa> (queryP::id == d.getFkPessoa()));
+				pessoa p_den = *(p.begin());
+				cout << "\tDados da pessoa desaparecida\n";
+				cout << "Nome: " << p_den.getNome() << endl;
+				cout << "RG: " << p_den.getRG() << endl;
+				cout << "CPF: " << p_den.getCPF() << endl;
+				cout << "Detalhes: " << p_den.getDetalhes() << endl << endl;
+				cout << "\tDados da denuncia\n";
+				cout << "Latitude: " << d.getLatitude() << " | Longitude: " << d.getLongitude() << endl;
+				if(d.getLatitudeD() != "-1"){
+					cout << "Latitude denuncia: " << d.getLatitudeD() << " | Longitude denuncia: " << d.getLongitudeD() << endl;
+				}
+				cout << "Detalhes: " << d.getDetalhes() << endl;
+				cout << "Data da denuncia: " << printTime(d.getDataDenuncia()) << endl;
+
+				cout << endl;
+				cout << "Deseja validar essa denuncia? (1 -> Sim | 2 -> Nao | 3 -> Sair)\n> ";
+				cin >> op;
+				getchar();
+				if(op == 3) break;
+				else if(op == 1){
+					d.changeEstado(true);
+					db -> update(d);
+					cout << "Denuncia validade com sucesso!" << endl;
+					getchar();
+				} else {
+					db -> erase(d);
+					cout << "Denuncia deletada com sucesso!" << endl;
+					getchar();
+				}
+			}
+			if(op != 3){
+				cout << "Nao ha mais denuncias para serem validadas!" << endl;
+			}
+		} else {
+			cout << "Nao ja mais denuncias para serem validadas!" << endl;
+		}
+		t.commit();
+
+	} catch(odb::exception &e){
+		cerr << e.what() << endl;
+	}	
+
 }
 
 /*********************************** TRECOS ALEATORIOS **********************************/

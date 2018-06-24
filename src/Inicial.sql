@@ -10,6 +10,6 @@ INSERT INTO papel (id, permissoes) VALUES
 	(4, 'r pessoa rw denuncia'),
 	(5, 'r pessoa w denuncia');
 
-INSERT INTO usuario (id, fk_papel, rg, cpf, nome, nome_usuario, hash_senha, data_cadastro) VALUES
-	(0, 1, '5612679', '09700990966', 'Felipe Weiss', 'admin', 'admin', CAST(EXTRACT(EPOCH FROM NOW()) as BIGINT)),
-	(1, 5, '', '', '', 'anonimo', '', CAST(EXTRACT(EPOCH FROM NOW()) as BIGINT));
+INSERT INTO usuario (fk_papel, rg, cpf, nome, nome_usuario, hash_senha, data_cadastro) VALUES
+	(1, '5612679', '09700990966', 'Felipe Weiss', 'admin', 'admin', CAST(EXTRACT(EPOCH FROM NOW()) as BIGINT)),
+	(5, '', '', '', 'anonimo', '', CAST(EXTRACT(EPOCH FROM NOW()) as BIGINT));

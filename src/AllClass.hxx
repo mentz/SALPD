@@ -162,14 +162,14 @@ private:
 public:
 
 	pessoa() {}
-	pessoa(std::string nome, std::string detalhes, time_t data_cadastro, std::string rg = "", std::string cpf = "", int idade = -1){
+	pessoa(std::string nome, std::string detalhes, time_t data_cadastro, std::string rg = "", std::string cpf = "", int idade = -1, bool estado = false){
 		this -> rg = rg;
 		this -> cpf = cpf;
 		this -> nome = nome;
 		this -> detalhes = detalhes;
 		this -> data_cadastro = data_cadastro;
 		this -> ultimo_update = data_cadastro;
-		this -> estado = false;
+		this -> estado = estado;
 		this -> idade = idade;
 	}
 
@@ -178,6 +178,10 @@ public:
 	}
 	void atualizaUpdate(time_t ultimo_update){
 		this -> ultimo_update = ultimo_update;
+	}
+	
+	unsigned int getID(){
+		return this -> id;
 	}
 
 	std::string getNome(){
@@ -188,6 +192,10 @@ public:
 	}
 	std::string getRG(){
 		return this -> rg;
+	}
+
+	std::string getDetalhes(){
+		return this -> detalhes;
 	}
 
 };
@@ -226,7 +234,7 @@ private:
 	time_t data_denuncia;
 public:
 	denuncia(){};
-	denuncia(pessoa * pessoa_denuncia, std::string latitude, std::string longitude, usuario * usuario_denuncia, std::string detalhes, time_t data_denuncia, std::string latitude_denuncia = "", std::string longitude_denuncia = ""){
+	denuncia(pessoa * pessoa_denuncia, std::string latitude, std::string longitude, usuario * usuario_denuncia, std::string detalhes, time_t data_denuncia, std::string latitude_denuncia = "", std::string longitude_denuncia = "", bool estado = false){
 		this -> pessoa_denuncia = pessoa_denuncia;
 		this -> latitude = latitude;
 		this -> longitude = longitude;
@@ -235,14 +243,39 @@ public:
 		this -> data_denuncia = data_denuncia;
 		this -> latitude_denuncia = latitude_denuncia;
 		this -> longitude_denuncia = longitude_denuncia;
-		this -> estado = false;
+		this -> estado = estado;
+	}
+	
+	unsigned int getID(){
+		return this -> id;
+	}
+	
+	unsigned int getFkPessoa(){
+		return (this -> pessoa_denuncia -> getID());
 	}
 
 	void changeEstado(bool estado){
 		this -> estado = estado;
 	}
 
-
+	std::string getLatitude(){
+		return this -> latitude;
+	}
+	std::string getLongitude(){
+		return this -> longitude;
+	}
+	std::string getLatitudeD(){
+		return this -> latitude_denuncia;
+	}
+	std::string getLongitudeD(){
+		return this -> longitude_denuncia;
+	}
+	std::string getDetalhes(){
+		return this -> detalhes;
+	}
+	time_t getDataDenuncia(){
+		return this -> data_denuncia;
+	}
 
 };
 

@@ -3,7 +3,7 @@ OUT = salpd
 CC = g++
 FLAGS = -w -std=c++14
 
-default: buildSQL build resetDB
+default: buildSQL build
 
 build:
 	$(CC) -c main.cpp $(FLAGS)

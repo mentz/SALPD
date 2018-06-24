@@ -34,6 +34,13 @@ time_t getTime(){
 	return time(0);
 }
 
+std::string printTime(time_t tempo){
+	char buffer[124];
+
+	std::strftime(buffer, 124, "%c", localtime(&tempo));
+	return std::string(buffer);
+}
+
 usuario getAnonimo(){
 	usuario anonimo("", "", "", "", "", getTime(), new papel(ANONIMO, ""));
 	anonimo.setID(1);
