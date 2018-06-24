@@ -1,4 +1,0 @@
-rm salpd
-Makefile:9: recipe for target 'clean' failed
-g++ -o salpd main.cpp DAO.cpp -Wall -std=c++17
-Makefile:12: recipe for target 'build' failed
