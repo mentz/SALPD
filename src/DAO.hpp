@@ -211,7 +211,7 @@ int DAO::criaUsuario(shared_ptr<database> db){
     cout << "Digite a senha do novo usuario: ";
     cin >> hash_senha;
 
-    cout << "Qual sera o papel do usuario? ";
+    cout << "Qual sera o papel do usuario? (ADMIN, GESTOR, AGENTE, INFORMANTE)\n> ";
     cin >> role;
 
     int p = (role == "ADMIN" ? ADMIN : (role == "GESTOR" ? GESTOR : (role == "AGENTE" ? AGENTE : INFORMANTE)));
@@ -251,7 +251,7 @@ usuario DAO::verificaLogin(shared_ptr<database> db){
 
         usuario ret;
 
-        if(r.size() == 0){
+        if(r.size() != 1){
             cout << "ID e/ou senha incorretos!" << endl;
             ret = getAnonimo();
             getchar();

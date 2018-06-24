@@ -28,15 +28,18 @@ void menuAdmin(shared_ptr<database> db){
 	printf("\t\tMenu do Admin\n\n");
 	printf("1 -> Criar Usuarios\n");
 	printf("2 -> Sair\n");
-	cout << "> ";
+	printf("> ");
 	cin >> op;
 	getchar();
 	switch (op) {
 		case 1:
 			ret = DAO::getInstance().criaUsuario(db);
-			if(ret){
+			cin.clear();
+			fflush(stdin);
+			if(ret == 1)
 				cout << "Usuario criado com sucesso!\n";
-			}
+			else
+				cout << "Houve algum erro ao criar o usuário.\n";
 			getchar();
 			newAuditoria(db, "Criar novo usuario", user);
 			break;
