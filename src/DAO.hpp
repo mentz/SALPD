@@ -17,9 +17,12 @@ public:
     int criaUsuario(shared_ptr<database> db);
 	
 	void checkDenuncias(shared_ptr<database> db);
+	
+	int editPessoa(shared_ptr<database> db, usuario user);
 
     /* Trecos aleatorios */
     usuario verificaLogin(shared_ptr<database> db);
+	void view_pessoa_15_dias(shared_ptr<database> db);
 };
 
 #include "DAO.hpp"
@@ -305,16 +308,125 @@ void DAO::checkDenuncias(shared_ptr<database> db){
 
 }
 
+int DAO::editPessoa(shared_ptr<database> db, usuario user){
+	
+	system(CLEAR);
+
+	printf("\t\tEditar pessoa\n\n");
+	printf("Digite o nome da pessoa: ");
+	std::string nome;
+	getline(cin, nome);
+	
+	int ret;
+
+	try {
+         transaction t(db -> begin());
+
+         typedef odb::query<pessoa> query;
+         typedef odb::result<pessoa> result;
+
+         std::string buscaLike = "%%" + nome + "%%";
+
+         result r(db -> query<pessoa>(query::nome.like(buscaLike) and query::estado == false));
+
+         if(r.size()){ //Tem pessoas com o mesmo ou com um nome proximo no banco de dados
+             printf("Encontramos algum(ns) resultado(s) com esse nome:\n");
+             int idx = 1;
+             std::vector<pessoa> pessoas_sistema;
+             for(result::iterator it = r.begin(); it != r.end(); it++){
+                 printf("%d -> Nome: %s | RG %8s | CPF: %s\n", idx++, it -> getNome().c_str(), it -> getRG().c_str(), it -> getCPF().c_str());
+                 pessoas_sistema.push_back(*it);
+             }
+			printf("Digite o numero da pessoa: (-1 para sair)\n> ");
+			int idx_c;
+			cin >> idx_c;
+			getchar();
+			if(idx_c == -1) ret = 0;
+			else {
+				pessoa &p = pessoas_sistema[idx_c - 1];
+				int op = 0;
+				while(op != -1){
+					printf("1 -> Nome | 2 -> RG | 3 -> CPF | 4 -> Detalhes | 5 -> Idade | 6 -> Estado | -1 -> Sair\n");
+					printf("Digite qual dado deseja atualizar: ");
+					cin >> op;
+					getchar();
+
+					std::string n_nome, n_rg, n_cpf, n_detalhes;
+					int n_estado, n_idade;
+
+					switch(op){
+						case 1:
+							printf("Digite o nome: ");
+							getline(cin, n_nome);
+							p.setNome(n_nome);
+							break;
+						case 2:
+							printf("Digite o RG: ");
+							getline(cin, n_rg);
+							p.setRG(n_rg);
+							break;
+						case 3:
+							printf("Digite o CPF: ");
+							getline(cin, n_cpf);
+							p.setCPF(n_cpf);
+							break;
+						case 4:
+							printf("Digite os detalhes: ");
+							getline(cin, n_detalhes);
+							p.setDetalhes(n_detalhes);
+							break;
+						case 5:
+							printf("Digite a idade: ");
+							cin >> n_idade;
+							getchar();
+							p.setIdade(n_idade);
+							break;
+						case 6:
+							printf("Digite o estado: (1 -> Desaparecido | 2 -> Encontrado)\n> ");
+							cin >> n_estado;
+							n_estado--;
+							p.changeEstado(n_estado);
+							break;
+					}
+				}
+
+				p.atualizaUpdate(getTime());
+
+				db -> update(p);
+								
+				ret = 1;			
+
+			}
+		 } else {
+			printf("Nao foi encontrado ninguem com este nome!");
+			getchar();
+			ret = 0;
+		 }
+
+		 t.commit();
+	} catch(odb::exception &e){
+		cerr << e.what() << endl;
+		ret = 0;
+	}
+
+	return ret;
+}
+
 /*********************************** TRECOS ALEATORIOS **********************************/
 usuario DAO::verificaLogin(shared_ptr<database> db){
     system(CLEAR);
     std::string nome_usuario, hash_senha;
 
     cout << "Digite seu usuario: ";
-    cin >> nome_usuario;
+    getline(cin,  nome_usuario);
 
     cout << "Digite sua senha: ";
-    cin >> hash_senha;
+    getline(cin, hash_senha);
+
+	if(nome_usuario == "" && hash_senha == ""){
+		return getAnonimo();
+	}
+
     typedef odb::query<usuario> query;
     typedef odb::result<usuario> result;
 
@@ -338,6 +450,44 @@ usuario DAO::verificaLogin(shared_ptr<database> db){
         cerr << e.what() << endl;
         return getAnonimo();
     }
+}
+
+void DAO::view_pessoa_15_dias(shared_ptr<database> db){
+	system(CLEAR);
+	typedef odb::query<view_pessoa_denuncia> query;
+	typedef odb::result<view_pessoa_denuncia> result;
+
+	transaction t(db -> begin());
+
+//	result r(db -> query<view_pessoa_denuncia>(query::data_denuncia >= getFixTime(1, 'x')));
+
+	typedef odb::query<pessoa> queryP;
+	typedef odb::result<pessoa> resultP;
+
+	resultP rr(db -> query<pessoa>());
+	result r(db -> query<view_pessoa_denuncia>(query::denuncia::data_denuncia >= (time(0) - 50)));
+
+	vector<pessoa> vet;
+	for(pessoa &p : rr){
+		int f = 1;
+		if(p.getEstado() == true) continue;
+		for(view_pessoa_denuncia &v : r){
+			if(v.id == p.getID()){
+				f = 0;
+				break;
+			}
+		}
+		if(f) vet.push_back(p);
+	}
+
+	printf("%-20s | %-10s | %-s\n", "Nome", "RG", "CPF");
+	for(pessoa &v : vet){
+		printf("%-20s | %-10s | %-s\n", v.getNome().c_str(), v.getRG().c_str(), v.getCPF().c_str());
+	}
+	
+	getchar();
+
+	t.commit();
 }
 
 #endif

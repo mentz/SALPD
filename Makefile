@@ -5,6 +5,6 @@ clean: src/Makefile
 	cd src && make clean
 
 build:
-	cd src && make build && mv salpd ../salpd
+	cd src && make && cp salpd ../salpd
 
 .PHONY: default clean build

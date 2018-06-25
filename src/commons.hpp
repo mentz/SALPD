@@ -47,6 +47,16 @@ usuario getAnonimo(){
 	return anonimo;
 }
 
+long long getFixTime(int val, char tipo){
+	if(tipo == 'd'){
+		time_t now = time(0);
+		return (now - val * 24*3600);
+	} else if(tipo == 's'){
+		time_t now = time(0);
+		return (now - val);
+	}
+}
+
 #ifdef _WIN32
 	#define CLEAR "cls"
 #else

@@ -17,9 +17,11 @@
 #include <odb/pgsql/statement.hxx>
 #include <odb/pgsql/statement-cache.hxx>
 #include <odb/pgsql/simple-object-statements.hxx>
+#include <odb/pgsql/view-statements.hxx>
 #include <odb/pgsql/container-statements.hxx>
 #include <odb/pgsql/exceptions.hxx>
 #include <odb/pgsql/simple-object-result.hxx>
+#include <odb/pgsql/view-result.hxx>
 
 namespace odb
 {
@@ -4736,6 +4738,241 @@ namespace odb
       q.parameters_binding ());
 
     return st.execute ();
+  }
+
+  // view_pessoa_denuncia
+  //
+
+  const char access::view_traits_impl< ::view_pessoa_denuncia, id_pgsql >::
+  query_statement_name[] = "query_view_pessoa_denuncia";
+
+  bool access::view_traits_impl< ::view_pessoa_denuncia, id_pgsql >::
+  grow (image_type& i,
+        bool* t)
+  {
+    ODB_POTENTIALLY_UNUSED (i);
+    ODB_POTENTIALLY_UNUSED (t);
+
+    bool grew (false);
+
+    // id
+    //
+    t[0UL] = 0;
+
+    // nome
+    //
+    if (t[1UL])
+    {
+      i.nome_value.capacity (i.nome_size);
+      grew = true;
+    }
+
+    // cpf
+    //
+    if (t[2UL])
+    {
+      i.cpf_value.capacity (i.cpf_size);
+      grew = true;
+    }
+
+    // rg
+    //
+    if (t[3UL])
+    {
+      i.rg_value.capacity (i.rg_size);
+      grew = true;
+    }
+
+    return grew;
+  }
+
+  void access::view_traits_impl< ::view_pessoa_denuncia, id_pgsql >::
+  bind (pgsql::bind* b,
+        image_type& i)
+  {
+    using namespace pgsql;
+
+    pgsql::statement_kind sk (statement_select);
+    ODB_POTENTIALLY_UNUSED (sk);
+
+    std::size_t n (0);
+
+    // id
+    //
+    b[n].type = pgsql::bind::bigint;
+    b[n].buffer = &i.id_value;
+    b[n].is_null = &i.id_null;
+    n++;
+
+    // nome
+    //
+    b[n].type = pgsql::bind::text;
+    b[n].buffer = i.nome_value.data ();
+    b[n].capacity = i.nome_value.capacity ();
+    b[n].size = &i.nome_size;
+    b[n].is_null = &i.nome_null;
+    n++;
+
+    // cpf
+    //
+    b[n].type = pgsql::bind::text;
+    b[n].buffer = i.cpf_value.data ();
+    b[n].capacity = i.cpf_value.capacity ();
+    b[n].size = &i.cpf_size;
+    b[n].is_null = &i.cpf_null;
+    n++;
+
+    // rg
+    //
+    b[n].type = pgsql::bind::text;
+    b[n].buffer = i.rg_value.data ();
+    b[n].capacity = i.rg_value.capacity ();
+    b[n].size = &i.rg_size;
+    b[n].is_null = &i.rg_null;
+    n++;
+  }
+
+  void access::view_traits_impl< ::view_pessoa_denuncia, id_pgsql >::
+  init (view_type& o,
+        const image_type& i,
+        database* db)
+  {
+    ODB_POTENTIALLY_UNUSED (o);
+    ODB_POTENTIALLY_UNUSED (i);
+    ODB_POTENTIALLY_UNUSED (db);
+
+    // id
+    //
+    {
+      long unsigned int& v =
+        o.id;
+
+      pgsql::value_traits<
+          long unsigned int,
+          pgsql::id_bigint >::set_value (
+        v,
+        i.id_value,
+        i.id_null);
+    }
+
+    // nome
+    //
+    {
+      ::std::string& v =
+        o.nome;
+
+      pgsql::value_traits<
+          ::std::string,
+          pgsql::id_string >::set_value (
+        v,
+        i.nome_value,
+        i.nome_size,
+        i.nome_null);
+    }
+
+    // cpf
+    //
+    {
+      ::std::string& v =
+        o.cpf;
+
+      pgsql::value_traits<
+          ::std::string,
+          pgsql::id_string >::set_value (
+        v,
+        i.cpf_value,
+        i.cpf_size,
+        i.cpf_null);
+    }
+
+    // rg
+    //
+    {
+      ::std::string& v =
+        o.rg;
+
+      pgsql::value_traits<
+          ::std::string,
+          pgsql::id_string >::set_value (
+        v,
+        i.rg_value,
+        i.rg_size,
+        i.rg_null);
+    }
+  }
+
+  access::view_traits_impl< ::view_pessoa_denuncia, id_pgsql >::query_base_type
+  access::view_traits_impl< ::view_pessoa_denuncia, id_pgsql >::
+  query_statement (const query_base_type& q)
+  {
+    query_base_type r (
+      "SELECT DISTINCT "
+      "\"pessoa\".\"id\", "
+      "\"pessoa\".\"nome\", "
+      "\"pessoa\".\"cpf\", "
+      "\"pessoa\".\"rg\" ");
+
+    r += "FROM \"pessoa\"";
+
+    r += " INNER JOIN \"denuncia\" ON";
+    // From AllClass.hxx:299:32
+    r += query_columns::pessoa::id == query_columns::denuncia::pessoa_denuncia;
+
+    if (!q.empty ())
+    {
+      r += " ";
+      r += q.clause_prefix ();
+      r += q;
+    }
+
+    return r;
+  }
+
+  result< access::view_traits_impl< ::view_pessoa_denuncia, id_pgsql >::view_type >
+  access::view_traits_impl< ::view_pessoa_denuncia, id_pgsql >::
+  query (database&, const query_base_type& q)
+  {
+    using namespace pgsql;
+    using odb::details::shared;
+    using odb::details::shared_ptr;
+
+    pgsql::connection& conn (
+      pgsql::transaction::current ().connection ());
+    statements_type& sts (
+      conn.statement_cache ().find_view<view_type> ());
+
+    image_type& im (sts.image ());
+    binding& imb (sts.image_binding ());
+
+    if (im.version != sts.image_version () || imb.version == 0)
+    {
+      bind (imb.bind, im);
+      sts.image_version (im.version);
+      imb.version++;
+    }
+
+    const query_base_type& qs (query_statement (q));
+    qs.init_parameters ();
+    shared_ptr<select_statement> st (
+      new (shared) select_statement (
+        sts.connection (),
+        query_statement_name,
+        qs.clause (),
+        false,
+        true,
+        qs.parameter_types (),
+        qs.parameter_count (),
+        qs.parameters_binding (),
+        imb));
+
+    st->execute ();
+    st->deallocate ();
+
+    shared_ptr< odb::view_result_impl<view_type> > r (
+      new (shared) pgsql::view_result_impl<view_type> (
+        qs, st, sts, 0));
+
+    return result<view_type> (r);
   }
 }
 

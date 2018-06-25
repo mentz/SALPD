@@ -21,7 +21,7 @@ void newAuditoria(shared_ptr<database> db, string acao, usuario user){
 	}
 }
 
-void menuInformante(shared_ptr<database> db){
+void menuInformante(shared_ptr<database> db, int *sair){
 	int op, ret;
 	system(CLEAR);
 
@@ -41,7 +41,7 @@ void menuInformante(shared_ptr<database> db){
 			break;
 		case 2:
 			newAuditoria(db, "Saiu da conta", user);
-			user = getAnonimo();
+			*sair = 1;
 			break;
 		default:
 			printf("Digite uma opcao valida!\n");
@@ -50,7 +50,7 @@ void menuInformante(shared_ptr<database> db){
 	
 }
 
-void menuAgente(shared_ptr<database> db){
+void menuAgente(shared_ptr<database> db, int *sair){
 	int op, ret;
 	system(CLEAR);
 
@@ -76,7 +76,7 @@ void menuAgente(shared_ptr<database> db){
 			break;
 		case 3:
 			newAuditoria(db, "Saiu da conta", user);
-			user = getAnonimo();
+			*sair = 1;
 			break;
 		default:
 			printf("Digite uma opcao valida!\n");
@@ -84,16 +84,17 @@ void menuAgente(shared_ptr<database> db){
 	}
 }
 
-void menuGestor(shared_ptr<database> db){
+void menuGestor(shared_ptr<database> db, int *sair){
 	int op, ret;
 	system(CLEAR);
 
 	printf("\t\t Menu do Gestor\n\n");
 	printf("1 -> Criar Usuarios\n");
 	printf("2 -> Adicionar pessoa desaparecida\n");
-	printf("3 -> Adicionar nova denuncia\n");
-	printf("4 -> Validar denuncias\n");
-	printf("5 -> Sair\n");
+	printf("3 -> Atualizar pessoa desaparecida\n");
+	printf("4 -> Adicionar nova denuncia\n");
+	printf("5 -> Validar denuncias\n");
+	printf("6 -> Sair\n");
 	printf("> ");
 	cin >> op;
 	getchar();
@@ -115,6 +116,14 @@ void menuGestor(shared_ptr<database> db){
 			getchar();
 			break;
 		case 3:
+			ret = DAO::getInstance().editPessoa(db, user);
+			if(ret){
+				cout << "Pessoa atualizada com sucesso!" << endl;
+			}
+			newAuditoria(db, "Atualizar pessoa desaparecida", user);
+			getchar();
+			break;
+		case 4:
 			ret = DAO::getInstance().createDenuncia(db, user, true);
 			if(ret){
 				cout << "Denuncia cadastrada com sucesso!" << endl;
@@ -122,13 +131,13 @@ void menuGestor(shared_ptr<database> db){
 			newAuditoria(db, "Cadastrar nova denuncia", user);
 			getchar();
 			break;
-		case 4:
+		case 5:
 			DAO::getInstance().checkDenuncias(db);
 			newAuditoria(db, "Check na lista de denuncias", user);
 			break;
-		case 5:
+		case 6:
 			newAuditoria(db, "Saiu da conta", user);
-			user = getAnonimo();
+			*sair = 1;
 			break;
 		default:
 			printf("Digite uma opcao valida!\n");
@@ -136,7 +145,7 @@ void menuGestor(shared_ptr<database> db){
 	}
 }
 
-void menuAdmin(shared_ptr<database> db){
+void menuAdmin(shared_ptr<database> db, int *sair){
 	int op, ret;
 	system(CLEAR);
 	// Apresentar opções
@@ -156,7 +165,7 @@ void menuAdmin(shared_ptr<database> db){
 			break;
 		case 2:
 			newAuditoria(db, "Sair da conta", user);
-			user = getAnonimo();
+			*sair = 1;
 			break;
 		default:
 			printf("Digite uma opcao valida!!\n");
@@ -174,28 +183,23 @@ void menuAnonimo(shared_ptr<database> db, int *sair){
 
 	printf("Logado como: %s\n\n", user.getFkPapel() -> getPapel().c_str());
 
-	printf("1 -> Login\n");
-	printf("2 -> Fazer denuncia\n");
+	printf("1 -> Fazer denuncia\n");
+	printf("2 -> Ver tabelas\n");
 	printf("3 -> Sair\n");
 	cout << "> ";
 	cin >> op;
 	getchar();
 	switch (op) {
 		case 1:
-			user = DAO::getInstance().verificaLogin(db);
-			if(user.getFkPapel() -> getID() != ANONIMO){
-				cout << "Login efetuado com sucesso!" << endl;
-			}
-			getchar();
-			newAuditoria(db, "Logar no sistema", user);
-			break;
-		case 2:
 			newAuditoria(db, "Cadastrar denuncia", user);
 			ret = DAO::getInstance().createDenuncia(db, user);
 			if(ret){
 				cout << "Denuncia feita com sucesso!" << endl;
 			}
 			getchar();
+			break;
+		case 2:
+			DAO::getInstance().view_pessoa_15_dias(db);
 			break;
 		case 3:
 			*sair = 1;
@@ -209,21 +213,21 @@ void menuAnonimo(shared_ptr<database> db, int *sair){
 }
 
 void menu(shared_ptr<database> db){
-	user = getAnonimo();
+	user = DAO::getInstance().verificaLogin(db);
 	int sair = 0;
 	while (!sair){
 		switch(user.getFkPapel() -> getID()){
 			case ADMIN:
-				menuAdmin(db);
+				menuAdmin(db, &sair);
 				break;
 			case GESTOR:
-				menuGestor(db);
+				menuGestor(db, &sair);
 				break;
 			case INFORMANTE:
-				menuInformante(db);
+				menuInformante(db, &sair);
 				break;
 			case AGENTE:
-				menuAgente(db);
+				menuAgente(db, &sair);
 				break;
 			default: //ANONIMO
 				menuAnonimo(db, &sair);

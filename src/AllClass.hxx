@@ -172,14 +172,31 @@ public:
 		this -> estado = estado;
 		this -> idade = idade;
 	}
-
+	bool getEstado(){
+		return this -> estado;
+	}
 	void changeEstado(bool estado){
 		this -> estado = estado;
 	}
 	void atualizaUpdate(time_t ultimo_update){
 		this -> ultimo_update = ultimo_update;
 	}
-	
+	void setRG(std::string rg){
+		this -> rg = rg;
+	}
+	void setCPF(std::string cpf){
+		this -> cpf = cpf;
+	}
+	void setIdade(int idade){
+		this -> idade = idade;
+	}
+	void setDetalhes(std::string detalhes){
+		this -> detalhes = detalhes;
+	}
+	void setNome(std::string nome){
+		this -> nome = nome;
+	}
+
 	unsigned int getID(){
 		return this -> id;
 	}
@@ -199,7 +216,7 @@ public:
 	}
 
 };
-//
+
 // #pragma db value(Pessoa) definition
 //
 #pragma db object
@@ -279,5 +296,17 @@ public:
 
 };
 
+#pragma db view object(pessoa) object(denuncia inner: pessoa::id == denuncia::pessoa_denuncia)\
+	query(distinct)
+struct view_pessoa_denuncia {
+	#pragma db column(pessoa::id)
+	unsigned long id;
+	std::string nome;
+	std::string cpf;
+	std::string rg;
+//	#pragma db column(pessoa::detalhes)
+//	std::string detalhes;
+//	time_t data_denuncia;
+};
 
 #endif

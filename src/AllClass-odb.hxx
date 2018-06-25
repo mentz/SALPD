@@ -27,6 +27,8 @@
 #include <odb/no-op-cache-traits.hxx>
 #include <odb/result.hxx>
 #include <odb/simple-object-result.hxx>
+#include <odb/view-image.hxx>
+#include <odb/view-result.hxx>
 
 #include <odb/details/unused.hxx>
 #include <odb/details/shared-ptr.hxx>
@@ -241,6 +243,25 @@ namespace odb
 
     static void
     callback (database&, const object_type&, callback_event);
+  };
+
+  // view_pessoa_denuncia
+  //
+  template <>
+  struct class_traits< ::view_pessoa_denuncia >
+  {
+    static const class_kind kind = class_view;
+  };
+
+  template <>
+  class access::view_traits< ::view_pessoa_denuncia >
+  {
+    public:
+    typedef ::view_pessoa_denuncia view_type;
+    typedef ::view_pessoa_denuncia* pointer_type;
+
+    static void
+    callback (database&, view_type&, callback_event);
   };
 }
 
@@ -1705,6 +1726,78 @@ namespace odb
   {
   };
 
+  // view_pessoa_denuncia
+  //
+  template <>
+  class access::view_traits_impl< ::view_pessoa_denuncia, id_pgsql >:
+    public access::view_traits< ::view_pessoa_denuncia >
+  {
+    public:
+    struct image_type
+    {
+      // id
+      //
+      long long id_value;
+      bool id_null;
+
+      // nome
+      //
+      details::buffer nome_value;
+      std::size_t nome_size;
+      bool nome_null;
+
+      // cpf
+      //
+      details::buffer cpf_value;
+      std::size_t cpf_size;
+      bool cpf_null;
+
+      // rg
+      //
+      details::buffer rg_value;
+      std::size_t rg_size;
+      bool rg_null;
+
+      std::size_t version;
+    };
+
+    typedef pgsql::view_statements<view_type> statements_type;
+
+    typedef pgsql::query_base query_base_type;
+    struct query_columns;
+
+    static const bool versioned = false;
+
+    static bool
+    grow (image_type&,
+          bool*);
+
+    static void
+    bind (pgsql::bind*,
+          image_type&);
+
+    static void
+    init (view_type&,
+          const image_type&,
+          database*);
+
+    static const std::size_t column_count = 4UL;
+
+    static query_base_type
+    query_statement (const query_base_type&);
+
+    static result<view_type>
+    query (database&, const query_base_type&);
+
+    static const char query_statement_name[];
+  };
+
+  template <>
+  class access::view_traits_impl< ::view_pessoa_denuncia, id_common >:
+    public access::view_traits_impl< ::view_pessoa_denuncia, id_pgsql >
+  {
+  };
+
   // papel
   //
   // usuario
@@ -2251,6 +2344,29 @@ namespace odb
   const typename query_columns< ::denuncia, id_pgsql, A >::data_denuncia_type_
   query_columns< ::denuncia, id_pgsql, A >::
   data_denuncia (A::table_name, "\"data_denuncia\"", 0);
+
+  // view_pessoa_denuncia
+  //
+  struct access::view_traits_impl< ::view_pessoa_denuncia, id_pgsql >::query_columns
+  {
+    // pessoa
+    //
+    typedef
+    odb::pointer_query_columns<
+      ::pessoa,
+      id_pgsql,
+      odb::access::object_traits_impl< ::pessoa, id_pgsql > >
+    pessoa;
+
+    // denuncia
+    //
+    typedef
+    odb::pointer_query_columns<
+      ::denuncia,
+      id_pgsql,
+      odb::access::object_traits_impl< ::denuncia, id_pgsql > >
+    denuncia;
+  };
 }
 
 #include "AllClass-odb.ixx"
